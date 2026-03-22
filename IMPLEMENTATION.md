@@ -118,7 +118,7 @@ All pages call `https://api.itsybit.se/rms/...` (or local dev at `http://localho
 - [ ] Deploy `event-store-api` with RentMyShit module to Azure (alongside Chorus)
 - [ ] Configure Resend API key in Azure env vars
 - [ ] Configure Supabase bucket for images
-- [ ] Set up `rentmyshit.itsybit.se` subdomain pointing to GitHub Pages
+- [ ] Set up `rentmystuff.itsybit.se` subdomain pointing to GitHub Pages
 - [ ] Add `VITE_API_URL` or just hardcode API base URL in JS
 
 ---
