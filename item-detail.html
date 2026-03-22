@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camping tent (4-person) — RentMyShit</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Item detail layout ── */
+    .item-hero {
+      background: var(--paper2);
+      border: 1.5px solid var(--rule);
+      border-radius: var(--card-radius);
+      aspect-ratio: 16/7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-xl);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .item-hero-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+      color: var(--faint);
+    }
+
+    .item-hero-placeholder svg {
+      opacity: 0.4;
+    }
+
+    .item-hero-placeholder span {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Item info column ── */
+    .item-info-col {}
+
+    .item-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    .item-big-name {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+    }
+
+    .item-big-rate {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      color: var(--punch);
+      white-space: nowrap;
+      padding-top: 3px;
+    }
+
+    .item-big-rate small {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .item-status-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .owner-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .owner-chip .avatar-xs {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 0.6rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.02em;
+    }
+
+    .dot {
+      color: var(--rule);
+    }
+
+    .item-desc {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-xl);
+    }
+
+    .item-desc p + p {
+      margin-top: var(--space-md);
+    }
+
+    .detail-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    .detail-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--space-md);
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: var(--space-sm);
+    }
+
+    .availability-block {
+      background: var(--available-bg);
+      border: 1.5px solid var(--available-bd);
+      border-radius: var(--card-radius);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .availability-block.booked {
+      background: var(--booked-bg);
+      border-color: var(--booked-bd);
+    }
+
+    .avail-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--available);
+      flex-shrink: 0;
+    }
+
+    .availability-block.booked .avail-dot {
+      background: var(--booked);
+    }
+
+    .avail-text {
+      font-size: 0.88rem;
+    }
+
+    .avail-text strong {
+      display: block;
+      color: var(--available);
+      font-size: 0.92rem;
+      margin-bottom: 2px;
+    }
+
+    .availability-block.booked .avail-text strong {
+      color: var(--booked);
+    }
+
+    .avail-text span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .condition-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .condition-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+
+    .condition-list li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--rule);
+      flex-shrink: 0;
+    }
+
+    /* ── Contact block ── */
+    .contact-block {
+      background: var(--paper2);
+      border: 1.5px solid var(--rule);
+      border-radius: var(--card-radius);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .contact-icon {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--rule);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--muted);
+    }
+
+    .contact-text {
+      font-size: 0.85rem;
+    }
+
+    .contact-text strong {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .contact-text a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .contact-text a:hover {
+      color: var(--punch);
+    }
+
+    /* ── Booking form column ── */
+    .booking-col {
+      position: sticky;
+      top: var(--space-lg);
+    }
+
+    .booking-card {
+      background: var(--paper);
+      border: 1.5px solid var(--rule);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+    }
+
+    .booking-card-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .booking-card-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      letter-spacing: 0.06em;
+    }
+
+    .booking-card-header .rate-pill {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--punch);
+    }
+
+    .booking-form {
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+    }
+
+    /* ── Email field callout ── */
+    .email-field-group {
+      position: relative;
+    }
+
+    .email-field-group .email-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .email-field-group label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .email-why {
+      font-size: 0.68rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .email-field-group input[type="email"] {
+      border-color: var(--ink);
+      border-width: 2px;
+      background: var(--paper);
+    }
+
+    .email-field-group input[type="email"]:focus {
+      border-color: var(--punch);
+      box-shadow: 0 0 0 3px var(--punch-bg);
+      outline: none;
+    }
+
+    .email-why-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--pending-bg);
+      border: 1px solid var(--pending-bd);
+      border-radius: var(--card-radius);
+      font-size: 0.78rem;
+      color: var(--pending);
+      line-height: 1.45;
+    }
+
+    .email-why-note svg {
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--pending);
+    }
+
+    .booking-summary {
+      background: var(--paper2);
+      border: 1px solid var(--rule);
+      border-radius: var(--card-radius);
+      padding: var(--space-md);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .summary-row:last-child {
+      border-top: 1px solid var(--rule);
+      padding-top: 8px;
+      margin-top: 4px;
+      margin-bottom: 0;
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 0.88rem;
+    }
+
+    .no-payment-note {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      padding-top: var(--space-sm);
+    }
+
+    .no-payment-note strong {
+      color: var(--ink-soft);
+    }
+
+    /* ── Success state ── */
+    .booking-success {
+      display: none;
+      padding: var(--space-xl) var(--space-lg);
+      text-align: center;
+    }
+
+    .booking-success.visible {
+      display: block;
+    }
+
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--available-bg);
+      border: 2px solid var(--available-bd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-md);
+      color: var(--available);
+    }
+
+    .success-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      letter-spacing: 0.06em;
+      margin-bottom: var(--space-sm);
+    }
+
+    .success-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 280px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .success-email-sent {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--pending);
+      background: var(--pending-bg);
+      border: 1px solid var(--pending-bd);
+      border-radius: var(--card-radius);
+      padding: 6px 12px;
+    }
+
+    /* ── Back nav ── */
+    .back-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: var(--space-lg);
+      transition: color 0.1s;
+    }
+
+    .back-nav:hover {
+      color: var(--ink);
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--space-lg);
+    }
+
+    .breadcrumb a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--ink);
+    }
+
+    .breadcrumb-sep {
+      color: var(--rule);
+    }
+
+    .breadcrumb-current {
+      color: var(--ink-soft);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead-inner">
+        <a href="friend-view.html" class="logo">
+          <span class="logo-name">Rent<span>My</span>Shit</span>
+          <span class="logo-tagline">Shared by Sarah K.</span>
+        </a>
+        <div class="masthead-actions">
+          <a href="friend-view.html" class="btn btn-ghost btn-sm">← All items</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="page-content">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="friend-view.html">Sarah's stuff</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">Camping tent (4-person)</span>
+      </div>
+
+      <!-- Hero photo -->
+      <div class="item-hero">
+        <div class="item-hero-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Photo goes here</span>
+        </div>
+      </div>
+
+      <!-- Detail grid: info + booking form -->
+      <div class="detail-grid">
+
+        <!-- ═══ LEFT: Item info ═══ -->
+        <div class="item-info-col">
+
+          <div class="item-title-row">
+            <h1 class="item-big-name">Camping tent<br>(4-person)</h1>
+            <div class="item-big-rate">150 <small>kr/day</small></div>
+          </div>
+
+          <div class="item-status-row">
+            <span class="badge badge-available">Available</span>
+            <span class="dot">·</span>
+            <div class="owner-chip">
+              <div class="avatar-xs">SK</div>
+              Sarah K.
+            </div>
+            <span class="dot">·</span>
+            <span style="font-size:0.82rem;color:var(--muted);">Nacka, Stockholm</span>
+          </div>
+
+          <div class="item-desc">
+            <p>Quechua 4-person family dome tent. Easy 10-minute setup, full waterproofing (HH 3000mm), inner tent with two separate sleeping areas. Comes packed in the original carry bag.</p>
+            <p>Great for weekend trips to Tyresta, family camping, music festivals — anything that isn't extreme mountaineering. Been on about a dozen trips, always returned clean and intact.</p>
+          </div>
+
+          <!-- Availability -->
+          <div class="detail-section">
+            <div class="detail-section-title">Availability</div>
+            <div class="availability-block">
+              <div class="avail-dot"></div>
+              <div class="avail-text">
+                <strong>Available now</strong>
+                <span>Next booked period: 2–9 April</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conditions -->
+          <div class="detail-section">
+            <div class="detail-section-title">Borrowing conditions</div>
+            <ul class="condition-list">
+              <li>Return clean and dry — or pay for cleaning</li>
+              <li>Pick up and return in Nacka (Fisksätra area)</li>
+              <li>50 kr deposit collected on pickup</li>
+              <li>Payment via Swish after return</li>
+            </ul>
+          </div>
+
+          <!-- Contact owner -->
+          <div class="detail-section">
+            <div class="detail-section-title">Owner contact</div>
+            <div class="contact-block">
+              <div class="contact-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <div class="contact-text">
+                <strong>Phone / Swish</strong>
+                <a href="tel:+4676000000">+46 76 000 00 00</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ═══ RIGHT: Booking form ═══ -->
+        <div class="booking-col">
+          <div class="booking-card">
+
+            <div class="booking-card-header">
+              <h3>Request booking</h3>
+              <span class="rate-pill">150 kr/day</span>
+            </div>
+
+            <!-- Form state -->
+            <form class="booking-form" id="bookingForm" onsubmit="submitBooking(event)">
+
+              <!-- Dates -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="startDate">From</label>
+                  <input type="date" id="startDate" name="startDate" required
+                    min="2026-03-23" value="2026-03-25" onchange="updateSummary()">
+                </div>
+                <div class="form-group">
+                  <label for="endDate">To</label>
+                  <input type="date" id="endDate" name="endDate" required
+                    min="2026-03-24" value="2026-03-28" onchange="updateSummary()">
+                </div>
+              </div>
+
+              <!-- Booking summary -->
+              <div class="booking-summary" id="bookingSummary">
+                <div class="summary-row">
+                  <span>150 kr × <span id="numDays">3</span> days</span>
+                  <span id="subtotal">450 kr</span>
+                </div>
+                <div class="summary-row">
+                  <span>Total (pay to Sarah on pickup)</span>
+                  <span id="total">450 kr</span>
+                </div>
+              </div>
+
+              <!-- Message -->
+              <div class="form-group">
+                <label for="borrowerMsg">Message to Sarah</label>
+                <textarea id="borrowerMsg" name="message" rows="3"
+                  placeholder="Hi Sarah! I'm going to Tyresta this weekend and need a tent for 3 adults…"></textarea>
+              </div>
+
+              <!-- ── Email field (the important one) ── -->
+              <div class="email-field-group">
+                <div class="email-label-row">
+                  <label for="borrowerEmail">Your email address *</label>
+                  <span class="email-why">Required</span>
+                </div>
+                <input type="email" id="borrowerEmail" name="email" required
+                  placeholder="you@example.com"
+                  autocomplete="email">
+              </div>
+
+              <!-- Why email? callout -->
+              <div class="email-why-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>We'll send you a <strong>confirmation link</strong> so you can view, edit, or cancel your request — no account needed.</span>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="btn btn-punch" style="width:100%;justify-content:center;padding:14px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Send request to Sarah
+              </button>
+
+              <div class="no-payment-note">
+                <strong>No payment now.</strong> Sarah confirms the booking,<br>then you arrange pickup & Swish directly.
+              </div>
+
+            </form>
+
+            <!-- Success state (hidden until submit) -->
+            <div class="booking-success" id="bookingSuccess">
+              <div class="success-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="success-title">Request sent!</div>
+              <div class="success-body">
+                Sarah will get an email notification and respond soon. Check your inbox for your confirmation link.
+              </div>
+              <div class="success-email-sent">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Confirmation sent to <span id="confirmedEmail" style="font-weight:600;margin-left:3px;"></span>
+              </div>
+              <a href="friend-view.html" class="btn btn-outline btn-sm" style="margin-top:var(--space-lg);">
+                ← Back to Sarah's stuff
+              </a>
+            </div>
+
+          </div>
+
+          <!-- Trust note below form -->
+          <div style="margin-top:var(--space-md);padding:var(--space-md);font-size:0.75rem;color:var(--muted);line-height:1.5;text-align:center;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            This list is only visible to people Sarah shared the link with.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="footer-logo">RentMyShit</span>
+          <span class="footer-tagline">Your stuff. Your friends. No middleman.</span>
+        </div>
+        <nav class="footer-links">
+          <a href="#">How it works</a>
+          <a href="#">Privacy</a>
+          <a href="#">About</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const RATE = 150;
+
+    function daysBetween(d1, d2) {
+      const a = new Date(d1), b = new Date(d2);
+      const diff = Math.ceil((b - a) / (1000 * 60 * 60 * 24));
+      return Math.max(diff, 1);
+    }
+
+    function updateSummary() {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      if (!start || !end) return;
+      const days = daysBetween(start, end);
+      const total = days * RATE;
+      document.getElementById('numDays').textContent = days;
+      document.getElementById('subtotal').textContent = total + ' kr';
+      document.getElementById('total').textContent = total + ' kr';
+
+      // Ensure end is after start
+      document.getElementById('endDate').min = start;
+    }
+
+    function submitBooking(e) {
+      e.preventDefault();
+      const email = document.getElementById('borrowerEmail').value;
+
+      // Hide form, show success
+      document.getElementById('bookingForm').style.display = 'none';
+      const success = document.getElementById('bookingSuccess');
+      success.classList.add('visible');
+      document.getElementById('confirmedEmail').textContent = email;
+    }
+
+    // Init
+    updateSummary();
+  </script>
+
+</body>
+</html>

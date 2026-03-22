@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RentMyShit — Your stuff, their use</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Dashboard-specific styles */
+    .stats-bar {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .stat-block {
+      background: var(--paper);
+      border: 1.5px solid var(--rule);
+      border-radius: var(--card-radius);
+      padding: var(--space-md) var(--space-lg);
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: var(--punch);
+      color: var(--paper);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 1px 5px;
+      border-radius: 1px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    .share-link-bar {
+      background: var(--paper);
+      border: 1.5px solid var(--rule);
+      border-radius: var(--card-radius);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .share-link-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .share-link-url {
+      flex: 1;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      background: var(--paper2);
+      border: 1px solid var(--rule);
+      padding: 6px 10px;
+      border-radius: 1px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-card-edit-overlay {
+      position: absolute;
+      top: var(--space-sm);
+      right: var(--space-sm);
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .item-card:hover .item-card-edit-overlay {
+      opacity: 1;
+    }
+
+    .edit-btn {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      border-radius: 1px;
+      transition: all 0.1s;
+    }
+
+    .edit-btn:hover {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead-inner">
+        <a href="index.html" class="logo">
+          <span class="logo-name">Rent<span>My</span>Shit</span>
+          <span class="logo-tagline">Trust-based peer rental</span>
+        </a>
+        <div class="masthead-actions">
+          <button class="btn btn-outline btn-sm" id="shareBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share my list
+          </button>
+          <button class="btn btn-ghost btn-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="page-content">
+    <div class="container">
+
+      <!-- Share link bar -->
+      <div class="share-link-bar">
+        <span class="share-link-label">Your invite link</span>
+        <div class="share-link-url" id="inviteUrl">rentmyshit.app/s/sarah-k-x7f2</div>
+        <button class="btn btn-primary btn-sm" id="copyLinkBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy
+        </button>
+      </div>
+
+      <!-- Notification email strip -->
+      <div style="display:flex;align-items:center;gap:var(--space-md);padding:10px var(--space-lg);background:var(--paper2);border:1.5px solid var(--rule);border-top:none;margin-top:-1px;margin-bottom:var(--space-xl);flex-wrap:wrap;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span style="font-size:0.75rem;color:var(--muted);">Request notifications → <strong style="color:var(--ink-soft);">sarah@example.com</strong></span>
+        <button class="btn btn-ghost btn-sm" style="font-size:0.7rem;padding:3px 10px;margin-left:auto;" onclick="showToast('Email settings coming soon')">Change</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat-block">
+          <div class="stat-value">8</div>
+          <div class="stat-label">Items listed</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value text-punch">3</div>
+          <div class="stat-label">Pending requests</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value">2</div>
+          <div class="stat-label">Currently out</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value">14</div>
+          <div class="stat-label">Friends with access</div>
+        </div>
+      </div>
+
+      <!-- ═══ PENDING REQUESTS ═══ -->
+      <section id="requests">
+        <div class="section-header">
+          <h2 class="section-title">Pending Requests <span class="new-badge">3 new</span></h2>
+        </div>
+
+        <div class="request-list">
+
+          <!-- Request 1 -->
+          <div class="request-card new">
+            <div class="request-thumb">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="request-info">
+              <div class="request-item-name">Projector + Screen</div>
+              <div class="request-meta">
+                <strong>Erik L.</strong> · 22–24 March · 3 days · <strong>600 kr</strong>
+                <span style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;font-size:0.75rem;color:var(--muted);font-weight:400;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <a href="mailto:erik.lindgren@example.com" style="color:var(--muted);text-decoration:none;">erik.lindgren@example.com</a>
+                </span>
+              </div>
+              <div class="request-message">"Hey! Need it for a presentation at work on Thursday. Will pick up Wednesday evening?"</div>
+              <div class="request-actions">
+                <button class="btn btn-primary btn-sm" onclick="acceptRequest(this)">Accept</button>
+                <button class="btn btn-outline btn-sm" onclick="declineRequest(this)">Decline</button>
+                <a href="item-detail.html" class="btn btn-ghost btn-sm">View item</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Request 2 -->
+          <div class="request-card new">
+            <div class="request-thumb">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <div class="request-info">
+              <div class="request-item-name">Camping tent (4-person)</div>
+              <div class="request-meta">
+                <strong>Maria & Tom</strong> · 28 Mar – 2 Apr · 6 days · <strong>900 kr</strong>
+                <span style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;font-size:0.75rem;color:var(--muted);font-weight:400;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <a href="mailto:maria.k@example.com" style="color:var(--muted);text-decoration:none;">maria.k@example.com</a>
+                </span>
+              </div>
+              <div class="request-message">"Going to Tyresta for a weekend trip! Super careful with gear, promise."</div>
+              <div class="request-actions">
+                <button class="btn btn-primary btn-sm" onclick="acceptRequest(this)">Accept</button>
+                <button class="btn btn-outline btn-sm" onclick="declineRequest(this)">Decline</button>
+                <a href="item-detail.html" class="btn btn-ghost btn-sm">View item</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Request 3 -->
+          <div class="request-card">
+            <div class="request-thumb">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/><path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/></svg>
+            </div>
+            <div class="request-info">
+              <div class="request-item-name">Kayak paddle set</div>
+              <div class="request-meta">
+                <strong>Anders P.</strong> · 15–17 Apr · 3 days · <strong>450 kr</strong>
+                <span style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;font-size:0.75rem;color:var(--muted);font-weight:400;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <a href="mailto:anders.p@example.com" style="color:var(--muted);text-decoration:none;">anders.p@example.com</a>
+                </span>
+              </div>
+              <div class="request-message">"Planning a day trip on Mälaren. Do you have life jackets too?"</div>
+              <div class="request-actions">
+                <button class="btn btn-primary btn-sm" onclick="acceptRequest(this)">Accept</button>
+                <button class="btn btn-outline btn-sm" onclick="declineRequest(this)">Decline</button>
+                <a href="item-detail.html" class="btn btn-ghost btn-sm">View item</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- ═══ MY ITEMS ═══ -->
+      <section id="items">
+        <div class="section-header">
+          <h2 class="section-title">My Stuff</h2>
+          <button class="btn btn-punch btn-sm" onclick="showAddItem()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add item
+          </button>
+        </div>
+
+        <div class="item-grid" id="itemGrid">
+
+          <!-- Item 1 -->
+          <a href="item-detail.html" class="item-card">
+            <div class="item-photo">
+              <div class="photo-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Projector</span>
+              </div>
+              <div class="item-card-edit-overlay">
+                <button class="edit-btn" title="Edit" onclick="event.preventDefault(); event.stopPropagation();">✏️</button>
+                <button class="edit-btn" title="Delete" onclick="event.preventDefault(); event.stopPropagation();">🗑</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">Projector + Screen</div>
+              <div class="item-meta">
+                <div class="item-rate">200 <span>kr/day</span></div>
+                <span class="badge badge-booked">Booked</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Item 2 -->
+          <a href="item-detail.html" class="item-card">
+            <div class="item-photo">
+              <div class="photo-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span>Camping tent</span>
+              </div>
+              <div class="item-card-edit-overlay">
+                <button class="edit-btn" title="Edit" onclick="event.preventDefault(); event.stopPropagation();">✏️</button>
+                <button class="edit-btn" title="Delete" onclick="event.preventDefault(); event.stopPropagation();">🗑</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">Camping tent (4-person)</div>
+              <div class="item-meta">
+                <div class="item-rate">150 <span>kr/day</span></div>
+                <span class="badge badge-available">Available</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Item 3 -->
+          <a href="item-detail.html" class="item-card">
+            <div class="item-photo">
+              <div class="photo-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Power tools</span>
+              </div>
+              <div class="item-card-edit-overlay">
+                <button class="edit-btn" title="Edit" onclick="event.preventDefault(); event.stopPropagation();">✏️</button>
+                <button class="edit-btn" title="Delete" onclick="event.preventDefault(); event.stopPropagation();">🗑</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">Drill + jigsaw set</div>
+              <div class="item-meta">
+                <div class="item-rate">100 <span>kr/day</span></div>
+                <span class="badge badge-available">Available</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Item 4 -->
+          <a href="item-detail.html" class="item-card">
+            <div class="item-photo">
+              <div class="photo-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                <span>Camera</span>
+              </div>
+              <div class="item-card-edit-overlay">
+                <button class="edit-btn" title="Edit" onclick="event.preventDefault(); event.stopPropagation();">✏️</button>
+                <button class="edit-btn" title="Delete" onclick="event.preventDefault(); event.stopPropagation();">🗑</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">Sony A6400 + lenses</div>
+              <div class="item-meta">
+                <div class="item-rate">350 <span>kr/day</span></div>
+                <span class="badge badge-available">Available</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Item 5 -->
+          <a href="item-detail.html" class="item-card booked">
+            <div class="item-photo">
+              <div class="photo-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 17H2a3 3 0 000 6h20a3 3 0 000-6z"/><path d="M5 17V5a2 2 0 012-2h10a2 2 0 012 2v12"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="13" y2="13"/></svg>
+                <span>Pressure washer</span>
+              </div>
+              <div class="item-card-edit-overlay">
+                <button class="edit-btn" title="Edit" onclick="event.preventDefault(); event.stopPropagation();">✏️</button>
+                <button class="edit-btn" title="Delete" onclick="event.preventDefault(); event.stopPropagation();">🗑</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">Kärcher pressure washer</div>
+              <div class="item-meta">
+                <div class="item-rate">250 <span>kr/day</span></div>
+                <span class="badge badge-booked">Booked</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Item 6 -->
+          <a href="item-detail.html" class="item-card">
+            <div class="item-photo">
+              <div class="photo-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zM12 6v6l4 2"/></svg>
+                <span>Stand mixer</span>
+              </div>
+              <div class="item-card-edit-overlay">
+                <button class="edit-btn" title="Edit" onclick="event.preventDefault(); event.stopPropagation();">✏️</button>
+                <button class="edit-btn" title="Delete" onclick="event.preventDefault(); event.stopPropagation();">🗑</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">KitchenAid stand mixer</div>
+              <div class="item-meta">
+                <div class="item-rate">125 <span>kr/day</span></div>
+                <span class="badge badge-available">Available</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Item 7 -->
+          <a href="item-detail.html" class="item-card">
+            <div class="item-photo">
+              <div class="photo-placeholder">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>
+                <span>Bicycle</span>
+              </div>
+              <div class="item-card-edit-overlay">
+                <button class="edit-btn" title="Edit" onclick="event.preventDefault(); event.stopPropagation();">✏️</button>
+                <button class="edit-btn" title="Delete" onclick="event.preventDefault(); event.stopPropagation();">🗑</button>
+              </div>
+            </div>
+            <div class="item-body">
+              <div class="item-name">City bike (adult)</div>
+              <div class="item-meta">
+                <div class="item-rate">80 <span>kr/day</span></div>
+                <span class="badge badge-available">Available</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Add item card -->
+          <button class="item-card-add" onclick="showAddItem()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add item
+          </button>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer-inner">
+        <span class="footer-logo">Rent<span>My</span>Shit</span>
+        <span class="footer-note">No payment on platform. Transactions happen offline. Trust your friends.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══ ADD ITEM MODAL ═══ -->
+  <div class="modal-overlay" id="addItemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add new item</h3>
+        <button class="modal-close" onclick="closeModal('addItemModal')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form onsubmit="submitAddItem(event)">
+        <div class="form-group">
+          <label for="itemName">Item name</label>
+          <input type="text" id="itemName" placeholder="e.g. Camping tent, power drill..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="itemRate">Daily rate (kr)</label>
+            <input type="text" id="itemRate" placeholder="150">
+          </div>
+          <div class="form-group">
+            <label for="itemStatus">Status</label>
+            <input type="text" id="itemStatus" placeholder="Available" value="Available">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="itemDesc">Description (optional)</label>
+          <textarea id="itemDesc" placeholder="Condition, any quirks, what's included..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo</label>
+          <button type="button" class="btn btn-outline" style="width:100%; justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Add photo
+          </button>
+        </div>
+        <button type="submit" class="btn btn-punch" style="width:100%; justify-content:center; margin-top: 8px;">
+          Add to my list
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Share link
+    document.getElementById('shareBtn').addEventListener('click', copyLink);
+    document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
+
+    function copyLink() {
+      const url = 'https://rentmyshit.app/s/sarah-k-x7f2';
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('📋 Invite link copied!');
+      }).catch(() => {
+        showToast('Link: ' + url);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2800);
+    }
+
+    function showAddItem() {
+      document.getElementById('addItemModal').classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function submitAddItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('itemName').value;
+      closeModal('addItemModal');
+      showToast(`✅ "${name}" added to your list`);
+      e.target.reset();
+    }
+
+    function acceptRequest(btn) {
+      const card = btn.closest('.request-card');
+      const name = card.querySelector('.request-item-name').textContent;
+      const emailEl = card.querySelector('.request-meta a[href^="mailto:"]');
+      const email = emailEl ? emailEl.textContent : 'the borrower';
+      card.style.opacity = '0.5';
+      card.style.transition = 'opacity 0.3s';
+      setTimeout(() => {
+        card.remove();
+        showToast(`✅ Accepted — confirmation email sent to ${email}`);
+      }, 300);
+    }
+
+    function declineRequest(btn) {
+      const card = btn.closest('.request-card');
+      const name = card.querySelector('.request-item-name').textContent;
+      const emailEl = card.querySelector('.request-meta a[href^="mailto:"]');
+      const email = emailEl ? emailEl.textContent : 'the borrower';
+      card.style.opacity = '0.5';
+      card.style.transition = 'opacity 0.3s';
+      setTimeout(() => {
+        card.remove();
+        showToast(`Declined — ${email} will be notified`);
+      }, 300);
+    }
+
+    // Close modal on overlay click
+    document.getElementById('addItemModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('addItemModal');
+    });
+  </script>
+</body>
+</html>
