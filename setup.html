@@ -59,7 +59,7 @@
             <div class="form-group">
               <label for="pageSlug">Page URL <span style="color:var(--muted);font-weight:400">(auto-generated, editable)</span></label>
               <input type="text" id="pageSlug" placeholder="e.g. sarah-k" required pattern="[a-z0-9\-]+" title="Lowercase letters, numbers, and hyphens only">
-              <div class="slug-preview" id="slugPreview">rentmystuff.itsybit.se/...</div>
+              <div class="slug-preview" id="slugPreview">loading...</div>
             </div>
             <div class="form-group">
               <label for="ownerLocation">Location (optional)</label>
@@ -168,14 +168,14 @@
       if (slugManuallyEdited) return;
       const slug = generateSlug(this.value);
       document.getElementById('pageSlug').value = slug;
-      document.getElementById('slugPreview').textContent = `rentmystuff.itsybit.se/${slug}`;
+      document.getElementById('slugPreview').textContent = `${RMS.SITE_BASE}/${slug}`;
     });
 
     document.getElementById('pageSlug').addEventListener('input', function () {
       slugManuallyEdited = true;
       const val = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
       this.value = val;
-      document.getElementById('slugPreview').textContent = val ? `rentmystuff.itsybit.se/${val}` : 'rentmystuff.itsybit.se/...';
+      document.getElementById('slugPreview').textContent = val ? `${RMS.SITE_BASE}/${val}` : `${RMS.SITE_BASE}/...`;
     });
 
     // Step 1: Create page
@@ -253,7 +253,7 @@
       document.getElementById('step2Dot').className = 'step-dot done';
       document.getElementById('step2Dot').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
 
-      const link = `rentmystuff.itsybit.se/${createdSlug}`;
+      const link = `${RMS.SITE_BASE}/${createdSlug}`;
       document.getElementById('successLink').textContent = link;
       document.getElementById('successView').classList.add('visible');
 
