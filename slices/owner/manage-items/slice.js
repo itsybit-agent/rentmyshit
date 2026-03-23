@@ -43,7 +43,7 @@ function renderItems(listings) {
   listings.forEach(item => {
     const status = item.status || 'available';
     const badge = StatusBadge.render(status);
-    const thumbSrc = item.image_url || item.photoUrl;
+    const thumbSrc = item.photoUrl || item.image_url;
     const thumb = thumbSrc
       ? `<img src="${esc(thumbSrc)}" alt="${esc(item.name)}">`
       : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--faint);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;

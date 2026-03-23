@@ -102,7 +102,7 @@ async function uploadListingImage(slug, id, file) {
   if (!window.ImageUpload) throw new Error('ImageUpload library not loaded');
   const publicUrl = await ImageUpload.compressAndUpload(file, id);
   // Persist the photo URL on the item in the backend
-  await updateListing(slug, id, { image_url: publicUrl });
+  await updateListing(slug, id, { photoUrl: publicUrl });
   return { url: publicUrl };
 }
 
