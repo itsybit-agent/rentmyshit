@@ -1,0 +1,29 @@
+name: Deploy to itsybit.se
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: nt23.unoeuro.com
+          username: itsybit.se
+          password: ${{ secrets.ITSYBIT_FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/rentmystuff/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .github/**
+            README.md
+            event-model.md
+            IMPLEMENTATION.md
