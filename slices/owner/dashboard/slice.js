@@ -5,9 +5,14 @@ window.RMS_PATHS = {
   itemDetail: '../../borrower/item-detail/',
 };
 
-const slug = RMS.getOwnerSlug();
+// Check URL for ?slug= param first, fall back to localStorage
+const urlParams = new URLSearchParams(window.location.search);
+const urlSlug = urlParams.get('slug');
+const storedSlug = RMS.getOwnerSlug();
+const slug = urlSlug || storedSlug;
+const needsPinPrompt = urlSlug && (!storedSlug || storedSlug !== urlSlug || !RMS.getOwnerPin());
 
-// If no slug stored, redirect to setup
+// If no slug at all, redirect to setup
 if (!slug) {
   window.location.href = '../create-page/';
 }
@@ -45,8 +50,54 @@ function copyLink() {
     .catch(() => Toast.show('Link: ' + inviteUrl));
 }
 
+const dashboardUrl = RMS.SITE_BASE + '/slices/owner/dashboard/?slug=' + encodeURIComponent(slug);
+
+function copyDashboardLink() {
+  navigator.clipboard.writeText(dashboardUrl)
+    .then(() => Toast.show('Dashboard link copied!'))
+    .catch(() => Toast.show('Link: ' + dashboardUrl));
+}
+
 document.getElementById('shareBtn').addEventListener('click', copyLink);
 document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
+document.getElementById('copyDashLinkBtn').addEventListener('click', copyDashboardLink);
+
+// PIN prompt for URL-based access
+function showPinPrompt() {
+  document.querySelector('.page-content').style.display = 'none';
+  Modal.open('pinModal');
+}
+
+document.getElementById('pinForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const pin = document.getElementById('pinInput').value;
+  const errorEl = document.getElementById('pinError');
+  errorEl.style.display = 'none';
+
+  // Temporarily set credentials to test the API call
+  RMS.setOwnerSlug(slug);
+  RMS.setOwnerPin(pin);
+
+  try {
+    pageData = await RMS.getOwnerPage(slug);
+    // PIN works — close modal, show dashboard
+    Modal.close('pinModal');
+    document.querySelector('.page-content').style.display = '';
+    if (pageData.shareToken) updateInviteUrl(pageData.shareToken);
+    renderDashboard(pageData);
+  } catch (err) {
+    if (err.status === 401 || err.status === 403) {
+      // Wrong PIN — clear stored credentials
+      RMS.setOwnerSlug('');
+      RMS.setOwnerPin('');
+      errorEl.textContent = 'Incorrect PIN';
+      errorEl.style.display = '';
+    } else {
+      errorEl.textContent = 'Could not connect — try again';
+      errorEl.style.display = '';
+    }
+  }
+});
 
 // Load page data
 async function loadDashboard() {
@@ -178,4 +229,8 @@ window.addEventListener('item:delete', async function (e) {
 });
 
 // Init
-loadDashboard();
+if (needsPinPrompt) {
+  showPinPrompt();
+} else {
+  loadDashboard();
+}

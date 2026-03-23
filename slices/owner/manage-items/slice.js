@@ -23,7 +23,7 @@ function esc(str) {
 async function loadItems() {
   try {
     pageData = await RMS.getOwnerPage(slug);
-    renderItems(pageData.listings || []);
+    renderItems(pageData.items || []);
   } catch (err) {
     console.error('Failed to load items:', err);
     Toast.show('Could not load items');
@@ -48,7 +48,7 @@ function renderItems(listings) {
       : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--faint);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
 
     const bookings = item.bookings || [];
-    const historyId = `history-${item.id}`;
+    const historyId = `history-${item.itemId}`;
     let historyHtml = '';
     if (bookings.length > 0) {
       historyHtml = `
@@ -67,7 +67,7 @@ function renderItems(listings) {
     }
 
     list.insertAdjacentHTML('beforeend', `
-      <div class="item-manage-card" data-id="${item.id}">
+      <div class="item-manage-card" data-id="${item.itemId}">
         <div class="item-manage-thumb">${thumb}</div>
         <div class="item-manage-info">
           <div class="item-manage-name">${esc(item.name)}</div>
@@ -78,8 +78,8 @@ function renderItems(listings) {
           </div>
           ${historyHtml}
           <div class="item-manage-actions">
-            <button class="btn btn-outline btn-sm" onclick="openEditModal('${item.id}')">Edit</button>
-            <button class="btn btn-ghost btn-sm" style="color:var(--punch);" onclick="handleDelete('${item.id}')">Delete</button>
+            <button class="btn btn-outline btn-sm" onclick="openEditModal('${item.itemId}')">Edit</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--punch);" onclick="handleDelete('${item.itemId}')">Delete</button>
           </div>
         </div>
       </div>`);
@@ -100,8 +100,8 @@ document.getElementById('addItemForm').addEventListener('submit', async function
   try {
     const result = await RMS.createListing(data);
     const fileInput = document.getElementById('newItemPhoto');
-    if (fileInput.files[0] && result && result.id) {
-      await RMS.uploadListingImage(result.id, fileInput.files[0]);
+    if (fileInput.files[0] && result && result.itemId) {
+      await RMS.uploadListingImage(result.itemId, fileInput.files[0]);
     }
     Toast.show(`"${name}" added`);
   } catch (err) {
@@ -115,7 +115,7 @@ document.getElementById('addItemForm').addEventListener('submit', async function
 
 // Edit item
 function openEditModal(id) {
-  const item = (pageData.listings || []).find(l => l.id === id);
+  const item = (pageData.items || []).find(l => l.itemId === id);
   if (!item) return;
   document.getElementById('editItemId').value = id;
   document.getElementById('editItemName').value = item.name || '';

@@ -36,6 +36,10 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           Copy
         </button>
+        <button class="btn btn-outline btn-sm" id="copyDashLinkBtn" title="Copy a link to access this dashboard from any device">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Dashboard link
+        </button>
       </div>
 
       <!-- Notification email strip -->
@@ -123,6 +127,23 @@
         <button type="submit" class="btn btn-punch" style="width:100%; justify-content:center; margin-top: 8px;">
           Add to my list
         </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PIN MODAL -->
+  <div class="modal-overlay" id="pinModal">
+    <div class="modal" style="max-width:340px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Enter your PIN</h3>
+      </div>
+      <form id="pinForm">
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:var(--space-md);">Enter your 4-digit owner PIN to access this dashboard.</p>
+        <div class="form-group">
+          <input type="password" id="pinInput" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="PIN" required autofocus style="text-align:center;font-size:1.4rem;letter-spacing:0.3em;">
+        </div>
+        <div id="pinError" style="display:none;color:var(--punch);font-size:0.82rem;margin-bottom:var(--space-md);font-weight:600;"></div>
+        <button type="submit" class="btn btn-punch" style="width:100%;justify-content:center;">Access dashboard</button>
       </form>
     </div>
   </div>
