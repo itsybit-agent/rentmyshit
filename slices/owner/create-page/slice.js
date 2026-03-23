@@ -1,5 +1,11 @@
 // Owner Create Page — slice.js
 
+// If owner already has a page, redirect to dashboard
+const _existingSlug = RMS.getOwnerSlug();
+if (_existingSlug) {
+  window.location.replace('../dashboard/?slug=' + encodeURIComponent(_existingSlug));
+}
+
 let createdSlug = '';
 
 document.getElementById('headerMount').innerHTML = Header.render({
