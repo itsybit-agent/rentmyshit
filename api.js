@@ -1,7 +1,7 @@
 // RentMyShit — API Client
 // Base URL configurable via localStorage or default
 
-const API_BASE = localStorage.getItem('rms_api_base') || 'https://api.itsybit.se/rms';
+const API_BASE = localStorage.getItem('rms_api_base') || 'https://labsapi-hmeva5cfhdfkejhz.westeurope-01.azurewebsites.net/api/rms';
 
 function getOwnerPin() {
   return localStorage.getItem('rms_owner_pin') || '';
