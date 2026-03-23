@@ -62,6 +62,9 @@ document.getElementById('shareBtn').addEventListener('click', copyLink);
 document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
 document.getElementById('copyDashLinkBtn').addEventListener('click', copyDashboardLink);
 
+// Set forgot PIN link
+document.getElementById('forgotPinLink').href = '../reset-pin/?slug=' + encodeURIComponent(slug);
+
 // PIN prompt for URL-based access
 function showPinPrompt() {
   document.querySelector('.page-content').style.display = 'none';

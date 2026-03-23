@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset PIN — RentMyStuff</title>
+  <link rel="stylesheet" href="../../shared/styles.css">
+  <style>
+    .reset-card { max-width: 400px; margin: var(--space-xl) auto; background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-xl); }
+    .reset-card h2 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: var(--space-sm); }
+    .reset-card p { font-size: 0.85rem; color: var(--muted); margin-bottom: var(--space-lg); }
+    .success-msg { text-align: center; padding: var(--space-xl) 0; }
+    .success-msg h3 { font-family: var(--font-display); margin-bottom: var(--space-sm); }
+    .success-msg p { font-size: 0.85rem; color: var(--muted); }
+    .error-msg { color: var(--punch); font-size: 0.82rem; font-weight: 600; margin-bottom: var(--space-md); display: none; }
+  </style>
+</head>
+<body>
+
+  <div id="headerMount"></div>
+
+  <main class="page-content">
+    <div class="container">
+
+      <!-- State 1: Request reset -->
+      <div class="reset-card" id="requestForm">
+        <h2>Forgot your PIN?</h2>
+        <p>Enter the email address you used when creating your page. We'll send you a link to reset your PIN.</p>
+        <form id="emailForm">
+          <div class="form-group">
+            <label for="emailInput">Email address</label>
+            <input type="email" id="emailInput" placeholder="you@example.com" required>
+          </div>
+          <div class="error-msg" id="requestError"></div>
+          <button type="submit" class="btn btn-punch" style="width:100%;justify-content:center;">Send reset link</button>
+        </form>
+      </div>
+
+      <!-- State 2: Check your email -->
+      <div class="reset-card success-msg" id="checkEmail" style="display:none;">
+        <h3>Check your email</h3>
+        <p>If that email matches, you'll receive a reset link shortly. The link expires in 1 hour.</p>
+      </div>
+
+      <!-- State 3: Set new PIN -->
+      <div class="reset-card" id="newPinForm" style="display:none;">
+        <h2>Set a new PIN</h2>
+        <p>Choose a new PIN for your dashboard.</p>
+        <form id="pinForm">
+          <div class="form-group">
+            <label for="newPinInput">New PIN</label>
+            <input type="password" id="newPinInput" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="Enter new PIN" required style="text-align:center;font-size:1.4rem;letter-spacing:0.3em;">
+          </div>
+          <div class="error-msg" id="confirmError"></div>
+          <button type="submit" class="btn btn-punch" style="width:100%;justify-content:center;">Reset PIN</button>
+        </form>
+      </div>
+
+      <!-- State 4: Success -->
+      <div class="reset-card success-msg" id="resetSuccess" style="display:none;">
+        <h3>PIN reset complete</h3>
+        <p>Your PIN has been updated. Redirecting to your dashboard...</p>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="../../shared/auth.js"></script>
+  <script src="../../shared/api.js"></script>
+  <script src="../../../lib/components/Toast.js"></script>
+  <script src="../../../lib/components/Header.js"></script>
+  <script src="../../../lib/components/Footer.js"></script>
+  <script src="slice.js"></script>
+</body>
+</html>
