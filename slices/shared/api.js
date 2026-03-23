@@ -34,7 +34,11 @@ function getOwnerPage(slug) {
 }
 
 function getBrowsePage(slug, token) {
-  return apiFetch(`/pages/${encodeURIComponent(slug)}/browse?t=${encodeURIComponent(token)}`);
+  // Use /browse endpoint when available (requires token); fall back to public /pages/{slug}
+  const path = token
+    ? `/pages/${encodeURIComponent(slug)}/browse?t=${encodeURIComponent(token)}`
+    : `/pages/${encodeURIComponent(slug)}`;
+  return apiFetch(path);
 }
 
 function rotateShareToken(slug) {

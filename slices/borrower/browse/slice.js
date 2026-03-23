@@ -33,7 +33,7 @@ async function loadPage() {
 function renderPage(data) {
   const name = data.ownerName || 'Someone';
   const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-  const listings = data.listings || [];
+  const listings = data.items || [];
   const available = listings.filter(l => l.status !== 'booked').length;
 
   // Header
