@@ -191,13 +191,13 @@
       document.getElementById('ownerEmail').textContent = data.ownerEmail || '';
 
       // Stats
-      const listings = data.listings || [];
-      const bookings = data.pending_bookings || [];
+      const listings = data.items || [];
+      const bookings = data.pendingBookings || [];
       const lentOut = listings.filter(l => l.status === 'booked').length;
       document.getElementById('statItems').textContent = listings.length;
       document.getElementById('statPending').textContent = bookings.length;
       document.getElementById('statOut').textContent = lentOut;
-      document.getElementById('statFriends').textContent = data.friend_count || 0;
+      document.getElementById('statFriends').textContent = data.friendCount || 0;
 
       // Pending requests
       const requestList = document.getElementById('requestList');
