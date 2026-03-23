@@ -3,6 +3,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const listingId = urlParams.get('id');
 const slug = urlParams.get('slug') || '';
+const shareToken = urlParams.get('t') || '';
 
 let itemData = null;
 let ownerName = '';
@@ -33,7 +34,7 @@ function renderItem(data) {
   document.title = `${data.name} — RentMyShit`;
 
   // Header
-  const backHref = slug ? `../browse/?slug=${encodeURIComponent(slug)}` : '../browse/';
+  const backHref = slug ? `../browse/?slug=${encodeURIComponent(slug)}${shareToken ? '&t=' + encodeURIComponent(shareToken) : ''}` : '../browse/';
   document.getElementById('headerMount').innerHTML = Header.render({
     tagline: `Shared by ${ownerName}`,
     logoHref: backHref,

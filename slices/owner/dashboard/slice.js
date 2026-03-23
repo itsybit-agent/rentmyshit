@@ -30,11 +30,16 @@ document.getElementById('footerMount').innerHTML = Footer.render();
 Modal.init();
 EventLog.init(slug);
 
-// Share link
-const inviteUrl = RMS.SITE_BASE + '/slices/borrower/browse/?slug=' + encodeURIComponent(slug);
-document.getElementById('inviteUrl').textContent = inviteUrl;
+// Share link — updated after page data loads with token
+let inviteUrl = '';
+
+function updateInviteUrl(token) {
+  inviteUrl = RMS.SITE_BASE + '/slices/borrower/browse/?slug=' + encodeURIComponent(slug) + '&t=' + encodeURIComponent(token);
+  document.getElementById('inviteUrl').textContent = inviteUrl;
+}
 
 function copyLink() {
+  if (!inviteUrl) { Toast.show('Loading share link…'); return; }
   navigator.clipboard.writeText(inviteUrl)
     .then(() => Toast.show('Invite link copied!'))
     .catch(() => Toast.show('Link: ' + inviteUrl));
@@ -47,6 +52,7 @@ document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
 async function loadDashboard() {
   try {
     pageData = await RMS.getOwnerPage(slug);
+    if (pageData.shareToken) updateInviteUrl(pageData.shareToken);
     renderDashboard(pageData);
   } catch (err) {
     console.error('Failed to load dashboard:', err);

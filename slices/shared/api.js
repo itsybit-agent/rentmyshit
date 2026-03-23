@@ -33,6 +33,14 @@ function getOwnerPage(slug) {
   return apiFetch(`/pages/${encodeURIComponent(slug)}`);
 }
 
+function getBrowsePage(slug, token) {
+  return apiFetch(`/pages/${encodeURIComponent(slug)}/browse?t=${encodeURIComponent(token)}`);
+}
+
+function rotateShareToken(slug) {
+  return apiFetch(`/pages/${encodeURIComponent(slug)}/rotate-token`, { method: 'POST' });
+}
+
 function updateOwnerPage(slug, data) {
   return apiFetch(`/pages/${encodeURIComponent(slug)}`, {
     method: 'PUT',
@@ -138,6 +146,8 @@ Object.assign(window.RMS, {
   SITE_BASE,
   createOwnerPage,
   getOwnerPage,
+  getBrowsePage,
+  rotateShareToken,
   updateOwnerPage,
   createListing,
   getListing,

@@ -5,9 +5,10 @@ window.RMS_PATHS = {
   itemDetail: '../item-detail/',
 };
 
-// Get slug from query param
+// Get slug + token from query params
 const urlParams = new URLSearchParams(window.location.search);
 const slug = urlParams.get('slug') || '';
+const shareToken = urlParams.get('t') || '';
 
 let pageData = null;
 let activeFilter = 'all';
@@ -15,11 +16,16 @@ let ownerName = '';
 
 async function loadPage() {
   try {
-    pageData = await RMS.getOwnerPage(slug);
+    pageData = await RMS.getBrowsePage(slug, shareToken);
     ownerName = pageData.ownerName || 'the owner';
     renderPage(pageData);
   } catch (err) {
     console.error('Failed to load page:', err);
+    if (err.status === 403) {
+      document.getElementById('itemGrid').innerHTML =
+        '<div style="text-align:center;padding:3rem;color:var(--muted);grid-column:1/-1;"><h2>This link is invalid or has expired</h2><p>Ask the owner for a new share link.</p></div>';
+      return;
+    }
     Toast.show('Could not load this page');
   }
 }
@@ -32,7 +38,7 @@ function renderPage(data) {
 
   // Header
   document.getElementById('headerMount').innerHTML = Header.render({
-    logoHref: './?slug=' + encodeURIComponent(slug),
+    logoHref: './?slug=' + encodeURIComponent(slug) + (shareToken ? '&t=' + encodeURIComponent(shareToken) : ''),
     tagline: `Shared by ${name}`,
     actions: '<a href="../../owner/create-page/" class="btn btn-ghost btn-sm">Got your own stuff? &rarr;</a>',
   });
@@ -69,7 +75,7 @@ function renderPage(data) {
   const grid = document.getElementById('itemGrid');
   grid.innerHTML = '';
   listings.forEach(item => {
-    grid.insertAdjacentHTML('beforeend', ItemCard.render(item, { mode: 'friend', slug }));
+    grid.insertAdjacentHTML('beforeend', ItemCard.render(item, { mode: 'friend', slug, token: shareToken }));
   });
   updateCount();
 
