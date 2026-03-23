@@ -128,6 +128,10 @@ function getListingAvailability(listingId) {
   return apiFetch(`/listings/${encodeURIComponent(listingId)}/availability`);
 }
 
+function getPageEvents(slug) {
+  return apiFetch(`/pages/${encodeURIComponent(slug)}/events`);
+}
+
 // ── Export ──
 Object.assign(window.RMS, {
   API_BASE,
@@ -147,4 +151,5 @@ Object.assign(window.RMS, {
   cancelBooking,
   editBooking,
   getListingAvailability,
+  getPageEvents,
 });

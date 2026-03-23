@@ -28,6 +28,7 @@ document.getElementById('headerMount').innerHTML = Header.render({
 });
 document.getElementById('footerMount').innerHTML = Footer.render();
 Modal.init();
+EventLog.init(slug);
 
 // Share link
 const inviteUrl = RMS.SITE_BASE + '/slices/borrower/browse/?slug=' + encodeURIComponent(slug);
