@@ -2,7 +2,7 @@
 // Requires: auth.js loaded first (sets up window.RMS with auth helpers)
 
 const API_BASE = localStorage.getItem('rms_api_base') || 'https://labsapi-hmeva5cfhdfkejhz.westeurope-01.azurewebsites.net/api/rms';
-const SITE_BASE = localStorage.getItem('rms_site_base') || 'https://itsybit-agent.github.io/rentmyshit';
+const SITE_BASE = localStorage.getItem('rms_site_base') || 'https://rentmystuff.itsybit.se';
 
 async function apiFetch(path, options = {}) {
   const url = `${API_BASE}${path}`;
