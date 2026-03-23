@@ -92,7 +92,7 @@ document.getElementById('addFirstItemForm').addEventListener('submit', async fun
     const result = await RMS.createListing(data);
     const fileInput = document.getElementById('firstItemPhoto');
     if (fileInput.files[0] && result && result.id) {
-      await RMS.uploadListingImage(result.id, fileInput.files[0]);
+      await RMS.uploadListingImage(createdSlug, result.id, fileInput.files[0]);
     }
   } catch (err) {
     console.error('Add item failed:', err);

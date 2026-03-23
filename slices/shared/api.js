@@ -98,9 +98,11 @@ function deleteListing(slug, id) {
   return apiFetch(`/pages/${encodeURIComponent(slug)}/items/${encodeURIComponent(id)}`, { method: 'DELETE' });
 }
 
-async function uploadListingImage(id, file) {
+async function uploadListingImage(slug, id, file) {
   if (!window.ImageUpload) throw new Error('ImageUpload library not loaded');
   const publicUrl = await ImageUpload.compressAndUpload(file, id);
+  // Persist the photo URL on the item in the backend
+  await updateListing(slug, id, { image_url: publicUrl });
   return { url: publicUrl };
 }
 

@@ -48,8 +48,9 @@ function renderItem(data) {
   document.getElementById('breadcrumbItem').textContent = data.name;
 
   // Hero image
-  if (data.image_url) {
-    document.getElementById('itemHero').innerHTML = `<img src="${esc(data.image_url)}" alt="${esc(data.name)}">`;
+  const heroSrc = data.image_url || data.photoUrl;
+  if (heroSrc) {
+    document.getElementById('itemHero').innerHTML = `<img src="${esc(heroSrc)}" alt="${esc(data.name)}">`;
   }
 
   // Title + rate

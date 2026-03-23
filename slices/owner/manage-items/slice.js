@@ -43,8 +43,9 @@ function renderItems(listings) {
   listings.forEach(item => {
     const status = item.status || 'available';
     const badge = StatusBadge.render(status);
-    const thumb = item.image_url
-      ? `<img src="${esc(item.image_url)}" alt="${esc(item.name)}">`
+    const thumbSrc = item.image_url || item.photoUrl;
+    const thumb = thumbSrc
+      ? `<img src="${esc(thumbSrc)}" alt="${esc(item.name)}">`
       : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--faint);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
 
     const bookings = item.bookings || [];
@@ -101,7 +102,7 @@ document.getElementById('addItemForm').addEventListener('submit', async function
     const result = await RMS.createListing(data);
     const fileInput = document.getElementById('newItemPhoto');
     if (fileInput.files[0] && result && result.itemId) {
-      await RMS.uploadListingImage(result.itemId, fileInput.files[0]);
+      await RMS.uploadListingImage(slug, result.itemId, fileInput.files[0]);
     }
     Toast.show(`"${name}" added`);
   } catch (err) {
@@ -144,7 +145,7 @@ document.getElementById('editItemForm').addEventListener('submit', async functio
     await RMS.updateListing(slug, id, data);
     const fileInput = document.getElementById('editItemPhoto');
     if (fileInput.files[0]) {
-      await RMS.uploadListingImage(id, fileInput.files[0]);
+      await RMS.uploadListingImage(slug, id, fileInput.files[0]);
     }
     Toast.show('Item updated');
   } catch (err) {
