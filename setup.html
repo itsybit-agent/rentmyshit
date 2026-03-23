@@ -165,19 +165,24 @@
       const slug = document.getElementById('pageSlug').value;
       const pin = document.getElementById('ownerPin').value;
       const data = {
-        owner_name: document.getElementById('ownerName').value,
-        owner_email: document.getElementById('ownerEmail').value,
+        ownerName: document.getElementById('ownerName').value,
+        ownerEmail: document.getElementById('ownerEmail').value,
         slug,
-        pin,
+        ownerPin: pin,
         location: document.getElementById('ownerLocation').value,
-        swish_number: document.getElementById('ownerSwish').value,
+        swishNumber: document.getElementById('ownerSwish').value,
       };
 
       try {
         await RMS.createOwnerPage(data);
       } catch (err) {
         console.error('Create page failed:', err);
-        // Continue anyway for demo
+        if (err.status === 409 || (err.message && err.message.includes('already taken'))) {
+          Toast.show('That URL is already taken — please choose a different one.', 'error');
+        } else {
+          Toast.show('Something went wrong. Please try again.', 'error');
+        }
+        return;
       }
 
       // Store credentials locally
@@ -200,9 +205,9 @@
     document.getElementById('addFirstItemForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const data = {
-        page_slug: createdSlug,
+        pageSlug: createdSlug,
         name: document.getElementById('firstItemName').value,
-        daily_rate: parseInt(document.getElementById('firstItemRate').value) || 0,
+        dailyRate: parseInt(document.getElementById('firstItemRate').value) || 0,
         description: document.getElementById('firstItemDesc').value,
         category: document.getElementById('firstItemCategory').value,
       };

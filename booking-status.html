@@ -135,9 +135,9 @@
 
     function renderBooking(data) {
       const status = data.status || 'pending';
-      const ownerName = data.owner_name || 'the owner';
+      const ownerName = data.ownerName || 'the owner';
 
-      document.title = `${data.item_name || 'Booking'} — RentMyShit`;
+      document.title = `${data.itemName || 'Booking'} — RentMyShit`;
 
       // Status icon + title
       const iconEl = document.getElementById('statusIcon');
@@ -169,7 +169,7 @@
 
       // Detail rows
       const days = data.days || 1;
-      const total = (data.daily_rate || 0) * days;
+      const total = (data.dailyRate || 0) * days;
       document.getElementById('detailRows').innerHTML = `
         <div class="detail-row"><span class="detail-label">Item</span><span class="detail-value">${esc(data.item_name)}</span></div>
         <div class="detail-row"><span class="detail-label">Dates</span><span class="detail-value">${esc(data.start_date)} \u2013 ${esc(data.end_date)}</span></div>
@@ -186,10 +186,10 @@
       }
 
       // Contact info (confirmed only)
-      if (status === 'confirmed' && (data.swish_number || data.location)) {
+      if (status === 'confirmed' && (data.swishNumber || data.location)) {
         document.getElementById('contactInfo').style.display = '';
         const parts = [];
-        if (data.swish_number) parts.push(`Swish: ${data.swish_number}`);
+        if (data.swishNumber) parts.push(`Swish: ${data.swishNumber}`);
         if (data.location) parts.push(`Pickup: ${data.location}`);
         document.getElementById('contactDetails').textContent = parts.join(' \u00b7 ');
       }
@@ -209,8 +209,8 @@
       }
 
       // Pre-fill edit form dates
-      document.getElementById('editStart').value = data.start_date || '';
-      document.getElementById('editEnd').value = data.end_date || '';
+      document.getElementById('editStart').value = data.startDate || '';
+      document.getElementById('editEnd').value = data.endDate || '';
     }
 
     function toggleEditDates() {
@@ -222,7 +222,7 @@
       const newStart = document.getElementById('editStart').value;
       const newEnd = document.getElementById('editEnd').value;
       try {
-        await RMS.editBooking(bookingId, token, { start_date: newStart, end_date: newEnd });
+        await RMS.editBooking(bookingId, token, { startDate: newStart, endDate: newEnd });
         Toast.show('Dates updated — owner notified');
         document.getElementById('editDatesForm').classList.remove('visible');
         loadBooking();

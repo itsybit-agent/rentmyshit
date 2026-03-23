@@ -162,9 +162,9 @@
     }
 
     function renderItem(data) {
-      ownerName = data.owner_name || 'the owner';
+      ownerName = data.ownerName || 'the owner';
       const initials = ownerName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-      const rate = data.daily_rate || 0;
+      const rate = data.dailyRate || 0;
       const status = data.status || 'available';
       const isBooked = status === 'booked';
 
@@ -230,7 +230,7 @@
       }
 
       // Contact
-      if (data.swish_number || data.phone) {
+      if (data.swishNumber || data.phone) {
         document.getElementById('contactSection').style.display = '';
         document.getElementById('contactBlock').innerHTML = `
           <div class="contact-block">
@@ -239,7 +239,7 @@
             </div>
             <div class="contact-text">
               <strong>Phone / Swish</strong>
-              <a href="tel:${esc(data.swish_number || data.phone)}">${esc(data.swish_number || data.phone)}</a>
+              <a href="tel:${esc(data.swishNumber || data.phone)}">${esc(data.swishNumber || data.phone)}</a>
             </div>
           </div>`;
       }

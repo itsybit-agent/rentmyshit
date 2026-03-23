@@ -188,7 +188,7 @@
 
     function renderDashboard(data) {
       // Owner email
-      document.getElementById('ownerEmail').textContent = data.owner_email || '';
+      document.getElementById('ownerEmail').textContent = data.ownerEmail || '';
 
       // Stats
       const listings = data.listings || [];
@@ -264,9 +264,9 @@
       e.preventDefault();
       const name = document.getElementById('itemName').value;
       const data = {
-        page_slug: slug,
+        pageSlug: slug,
         name,
-        daily_rate: parseInt(document.getElementById('itemRate').value) || 0,
+        dailyRate: parseInt(document.getElementById('itemRate').value) || 0,
         description: document.getElementById('itemDesc').value,
         category: document.getElementById('itemCategory').value,
       };

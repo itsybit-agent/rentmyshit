@@ -29,7 +29,10 @@ async function apiFetch(path, options = {}) {
   const res = await fetch(url, { ...options, headers });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`API ${res.status}: ${body || res.statusText}`);
+    const err = new Error(`API ${res.status}: ${body || res.statusText}`);
+    err.status = res.status;
+    err.body = body;
+    throw err;
   }
   if (res.status === 204) return null;
   return res.json();
