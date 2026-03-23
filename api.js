@@ -41,7 +41,7 @@ async function apiFetch(path, options = {}) {
 // ── Owner Pages ──
 
 function createOwnerPage(data) {
-  // data: { owner_name, owner_email, slug, pin, location?, swish_number? }
+  // data: { ownerName, ownerEmail, slug, pin, location?, swishNumber? }
   return apiFetch('/pages', { method: 'POST', body: JSON.stringify(data) });
 }
 
@@ -59,7 +59,7 @@ function updateOwnerPage(slug, data) {
 // ── Listings ──
 
 function createListing(data) {
-  // data: { page_slug, name, description?, daily_rate, condition_notes?, category? }
+  // data: { pageSlug, name, description?, dailyRate, condition_notes?, category? }
   return apiFetch('/listings', { method: 'POST', body: JSON.stringify(data) });
 }
 
@@ -97,7 +97,7 @@ function uploadListingImage(id, file) {
 // ── Bookings ──
 
 function requestBooking(listingId, data) {
-  // data: { start_date, end_date, message?, borrower_email }
+  // data: { startDate, endDate, message?, borrowerEmail }
   return apiFetch(`/listings/${encodeURIComponent(listingId)}/bookings`, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -128,7 +128,7 @@ function cancelBooking(bookingId, token) {
 }
 
 function editBooking(bookingId, token, data) {
-  // data: { start_date, end_date }
+  // data: { startDate, endDate }
   return apiFetch(`/bookings/${encodeURIComponent(bookingId)}`, {
     method: 'PUT',
     body: JSON.stringify({ token, ...data }),

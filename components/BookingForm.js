@@ -118,10 +118,10 @@ window.BookingForm = {
       e.preventDefault();
       const email = document.getElementById(`${formId}Email`).value;
       const data = {
-        start_date: startEl.value,
-        end_date: endEl.value,
+        startDate: startEl.value,
+        endDate: endEl.value,
         message: document.getElementById(`${formId}Msg`).value,
-        borrower_email: email,
+        borrowerEmail: email,
       };
 
       try {

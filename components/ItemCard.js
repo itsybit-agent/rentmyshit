@@ -3,7 +3,7 @@
 //
 // Usage:
 //   ItemCard.render(item, { mode: 'owner' | 'friend', slug? })
-//   item: { id, name, daily_rate, status, category?, image_url?, description? }
+//   item: { id, name, dailyRate, status, category?, image_url?, description? }
 
 window.ItemCard = {
   render(item, opts = {}) {
@@ -35,7 +35,7 @@ window.ItemCard = {
           <div class="item-body">
             <div class="item-name">${this._esc(item.name)}</div>
             <div class="item-meta">
-              <div class="item-rate">${item.daily_rate} <span>kr/day</span></div>
+              <div class="item-rate">${item.dailyRate} <span>kr/day</span></div>
               ${badge}
             </div>
           </div>
@@ -52,7 +52,7 @@ window.ItemCard = {
           <div class="item-body">
             <div class="item-name">${this._esc(item.name)}</div>
             <div class="item-meta">
-              <div class="item-rate">${item.daily_rate} <span>kr/day</span></div>
+              <div class="item-rate">${item.dailyRate} <span>kr/day</span></div>
               ${badge}
             </div>
           </div>

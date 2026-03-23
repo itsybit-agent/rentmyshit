@@ -57,7 +57,7 @@
               <input type="email" id="ownerEmail" placeholder="you@example.com" required autocomplete="email">
             </div>
             <div class="form-group">
-              <label for="pageSlug">Page URL slug</label>
+              <label for="pageSlug">Page URL <span style="color:var(--muted);font-weight:400">(auto-generated, editable)</span></label>
               <input type="text" id="pageSlug" placeholder="e.g. sarah-k" required pattern="[a-z0-9\-]+" title="Lowercase letters, numbers, and hyphens only">
               <div class="slug-preview" id="slugPreview">rentmystuff.itsybit.se/...</div>
             </div>
@@ -153,7 +153,26 @@
     document.getElementById('footerMount').innerHTML = Footer.render();
 
     // Slug preview
+    function generateSlug(name) {
+      const parts = name.trim().toLowerCase().split(/\s+/);
+      const base = parts.length > 1
+        ? parts[0] + '-' + parts[parts.length - 1][0]
+        : parts[0];
+      const clean = base.replace(/[^a-z0-9\-]/g, '');
+      const suffix = Math.random().toString(36).slice(2, 6);
+      return `${clean}-${suffix}`;
+    }
+
+    let slugManuallyEdited = false;
+    document.getElementById('ownerName').addEventListener('input', function () {
+      if (slugManuallyEdited) return;
+      const slug = generateSlug(this.value);
+      document.getElementById('pageSlug').value = slug;
+      document.getElementById('slugPreview').textContent = `rentmystuff.itsybit.se/${slug}`;
+    });
+
     document.getElementById('pageSlug').addEventListener('input', function () {
+      slugManuallyEdited = true;
       const val = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
       this.value = val;
       document.getElementById('slugPreview').textContent = val ? `rentmystuff.itsybit.se/${val}` : 'rentmystuff.itsybit.se/...';
