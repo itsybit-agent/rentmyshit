@@ -297,7 +297,7 @@
     window.addEventListener('item:delete', async function (e) {
       if (!confirm('Delete this item?')) return;
       try {
-        await RMS.deleteListing(e.detail);
+        await RMS.deleteListing(slug, e.detail);
         Toast.show('Item deleted');
         loadDashboard();
       } catch (err) {

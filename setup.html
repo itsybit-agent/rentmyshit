@@ -239,6 +239,9 @@
         }
       } catch (err) {
         console.error('Add item failed:', err);
+        Toast.show('Could not add item — you can add it from the dashboard.', 'error');
+        finishSetup();
+        return;
       }
 
       Toast.show('Item added!');

@@ -60,22 +60,23 @@ function updateOwnerPage(slug, data) {
 
 function createListing(data) {
   // data: { pageSlug, name, description?, dailyRate, condition_notes?, category? }
-  return apiFetch('/listings', { method: 'POST', body: JSON.stringify(data) });
+  const { pageSlug, ...body } = data;
+  return apiFetch(`/pages/${encodeURIComponent(pageSlug)}/items`, { method: 'POST', body: JSON.stringify(body) });
 }
 
-function getListing(id) {
-  return apiFetch(`/listings/${encodeURIComponent(id)}`);
+function getListing(slug, id) {
+  return apiFetch(`/pages/${encodeURIComponent(slug)}/items/${encodeURIComponent(id)}`);
 }
 
-function updateListing(id, data) {
-  return apiFetch(`/listings/${encodeURIComponent(id)}`, {
+function updateListing(slug, id, data) {
+  return apiFetch(`/pages/${encodeURIComponent(slug)}/items/${encodeURIComponent(id)}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
-function deleteListing(id) {
-  return apiFetch(`/listings/${encodeURIComponent(id)}`, { method: 'DELETE' });
+function deleteListing(slug, id) {
+  return apiFetch(`/pages/${encodeURIComponent(slug)}/items/${encodeURIComponent(id)}`, { method: 'DELETE' });
 }
 
 function uploadListingImage(id, file) {

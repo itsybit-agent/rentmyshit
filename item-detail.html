@@ -147,7 +147,7 @@
 
     async function loadItem() {
       try {
-        itemData = await RMS.getListing(listingId);
+        itemData = await RMS.getListing(slug, listingId);
         renderItem(itemData);
       } catch (err) {
         console.error('Failed to load item:', err);
