@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started — RentMyShit</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .setup-container { max-width: 480px; margin: 0 auto; }
+    .setup-hero { text-align: center; margin-bottom: var(--space-xl); }
+    .setup-hero h1 { font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 0.04em; line-height: 1.05; margin-bottom: var(--space-sm); }
+    .setup-hero p { font-size: 0.9rem; color: var(--muted); line-height: 1.55; }
+    .setup-card { background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-xl); margin-bottom: var(--space-xl); }
+    .setup-card h2 { font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.04em; margin-bottom: var(--space-lg); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--rule); }
+    .step-indicator { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); }
+    .step-dot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--rule); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1rem; color: var(--muted); flex-shrink: 0; }
+    .step-dot.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .step-dot.done { background: var(--available); color: var(--paper); border-color: var(--available); }
+    .step-line { height: 2px; flex: 1; background: var(--rule); }
+    .step-line.done { background: var(--available); }
+    .slug-preview { font-family: monospace; font-size: 0.82rem; color: var(--muted); background: var(--paper2); border: 1px solid var(--rule); padding: 6px 10px; border-radius: 1px; margin-top: var(--space-xs); }
+    .success-view { display: none; text-align: center; }
+    .success-view.visible { display: block; }
+    .success-link { font-family: monospace; font-size: 0.9rem; background: var(--paper2); border: 1.5px solid var(--rule); padding: var(--space-sm) var(--space-md); border-radius: var(--card-radius); display: inline-block; margin: var(--space-md) 0; word-break: break-all; }
+  </style>
+</head>
+<body>
+
+  <div id="headerMount"></div>
+
+  <main class="page-content">
+    <div class="container">
+      <div class="setup-container">
+
+        <div class="setup-hero">
+          <h1>Share your stuff<br>with friends</h1>
+          <p>Create a page, list your items, share the link. No accounts for your friends — just email.</p>
+        </div>
+
+        <!-- Step indicator -->
+        <div class="step-indicator">
+          <div class="step-dot active" id="step1Dot">1</div>
+          <div class="step-line" id="step1Line"></div>
+          <div class="step-dot" id="step2Dot">2</div>
+        </div>
+
+        <!-- Step 1: Create page -->
+        <div class="setup-card" id="step1Card">
+          <h2>Create your page</h2>
+          <form id="createPageForm">
+            <div class="form-group">
+              <label for="ownerName">Your name</label>
+              <input type="text" id="ownerName" placeholder="e.g. Sarah K." required>
+            </div>
+            <div class="form-group">
+              <label for="ownerEmail">Notification email</label>
+              <input type="email" id="ownerEmail" placeholder="you@example.com" required autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="pageSlug">Page URL slug</label>
+              <input type="text" id="pageSlug" placeholder="e.g. sarah-k" required pattern="[a-z0-9\-]+" title="Lowercase letters, numbers, and hyphens only">
+              <div class="slug-preview" id="slugPreview">rentmystuff.itsybit.se/...</div>
+            </div>
+            <div class="form-group">
+              <label for="ownerLocation">Location (optional)</label>
+              <input type="text" id="ownerLocation" placeholder="e.g. Nacka, Stockholm">
+            </div>
+            <div class="form-group">
+              <label for="ownerSwish">Swish / phone (optional)</label>
+              <input type="tel" id="ownerSwish" placeholder="+46 70 000 00 00">
+            </div>
+            <div class="form-group">
+              <label for="ownerPin">Choose a PIN (to manage your page)</label>
+              <input type="text" id="ownerPin" placeholder="4-6 digit PIN" required pattern="\d{4,6}" title="4-6 digits">
+            </div>
+            <button type="submit" class="btn btn-punch" style="width:100%;justify-content:center;margin-top:var(--space-sm);">
+              Create my page
+            </button>
+          </form>
+        </div>
+
+        <!-- Step 2: Add first item -->
+        <div class="setup-card" id="step2Card" style="display:none;">
+          <h2>Add your first item</h2>
+          <form id="addFirstItemForm">
+            <div class="form-group">
+              <label for="firstItemName">Item name</label>
+              <input type="text" id="firstItemName" placeholder="e.g. Camping tent, power drill..." required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstItemRate">Daily rate (kr)</label>
+                <input type="text" id="firstItemRate" placeholder="150">
+              </div>
+              <div class="form-group">
+                <label for="firstItemCategory">Category</label>
+                <input type="text" id="firstItemCategory" placeholder="e.g. tools, outdoor...">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="firstItemDesc">Description (optional)</label>
+              <textarea id="firstItemDesc" placeholder="Condition, any quirks, what's included..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Photo</label>
+              <input type="file" id="firstItemPhoto" accept="image/*" style="font-size:0.85rem;">
+            </div>
+            <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-sm);">
+              <button type="submit" class="btn btn-punch" style="flex:1;justify-content:center;">
+                Add item &amp; finish
+              </button>
+              <button type="button" class="btn btn-outline" onclick="finishSetup()" style="justify-content:center;">
+                Skip for now
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Success -->
+        <div class="success-view" id="successView">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--available-bg);border:2px solid var(--available-bd);display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-lg);color:var(--available);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 style="font-family:var(--font-display);font-size:1.8rem;letter-spacing:0.04em;margin-bottom:var(--space-sm);">You're all set!</h2>
+          <p style="color:var(--muted);font-size:0.9rem;margin-bottom:var(--space-md);">Share this link with friends so they can browse and borrow:</p>
+          <div class="success-link" id="successLink"></div>
+          <div style="margin-top:var(--space-lg);display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" id="copySuccessLink">Copy link</button>
+            <a href="index.html" class="btn btn-outline btn-sm">&rarr; Go to dashboard</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Components -->
+  <script src="api.js"></script>
+  <script src="components/Toast.js"></script>
+  <script src="components/Header.js"></script>
+  <script src="components/Footer.js"></script>
+
+  <script>
+    let createdSlug = '';
+
+    document.getElementById('headerMount').innerHTML = Header.render({
+      tagline: 'Get started',
+      actions: '<a href="index.html" class="btn btn-ghost btn-sm">Already have a page? &rarr;</a>',
+    });
+    document.getElementById('footerMount').innerHTML = Footer.render();
+
+    // Slug preview
+    document.getElementById('pageSlug').addEventListener('input', function () {
+      const val = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      this.value = val;
+      document.getElementById('slugPreview').textContent = val ? `rentmystuff.itsybit.se/${val}` : 'rentmystuff.itsybit.se/...';
+    });
+
+    // Step 1: Create page
+    document.getElementById('createPageForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const slug = document.getElementById('pageSlug').value;
+      const pin = document.getElementById('ownerPin').value;
+      const data = {
+        owner_name: document.getElementById('ownerName').value,
+        owner_email: document.getElementById('ownerEmail').value,
+        slug,
+        pin,
+        location: document.getElementById('ownerLocation').value,
+        swish_number: document.getElementById('ownerSwish').value,
+      };
+
+      try {
+        await RMS.createOwnerPage(data);
+      } catch (err) {
+        console.error('Create page failed:', err);
+        // Continue anyway for demo
+      }
+
+      // Store credentials locally
+      RMS.setOwnerSlug(slug);
+      RMS.setOwnerPin(pin);
+      createdSlug = slug;
+
+      // Advance to step 2
+      document.getElementById('step1Card').style.display = 'none';
+      document.getElementById('step2Card').style.display = '';
+      document.getElementById('step1Dot').className = 'step-dot done';
+      document.getElementById('step1Dot').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+      document.getElementById('step1Line').className = 'step-line done';
+      document.getElementById('step2Dot').className = 'step-dot active';
+
+      Toast.show('Page created!');
+    });
+
+    // Step 2: Add first item
+    document.getElementById('addFirstItemForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const data = {
+        page_slug: createdSlug,
+        name: document.getElementById('firstItemName').value,
+        daily_rate: parseInt(document.getElementById('firstItemRate').value) || 0,
+        description: document.getElementById('firstItemDesc').value,
+        category: document.getElementById('firstItemCategory').value,
+      };
+
+      try {
+        const result = await RMS.createListing(data);
+        const fileInput = document.getElementById('firstItemPhoto');
+        if (fileInput.files[0] && result && result.id) {
+          await RMS.uploadListingImage(result.id, fileInput.files[0]);
+        }
+      } catch (err) {
+        console.error('Add item failed:', err);
+      }
+
+      Toast.show('Item added!');
+      finishSetup();
+    });
+
+    function finishSetup() {
+      document.getElementById('step2Card').style.display = 'none';
+      document.getElementById('step2Dot').className = 'step-dot done';
+      document.getElementById('step2Dot').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+
+      const link = `rentmystuff.itsybit.se/${createdSlug}`;
+      document.getElementById('successLink').textContent = link;
+      document.getElementById('successView').classList.add('visible');
+
+      document.getElementById('copySuccessLink').addEventListener('click', function () {
+        navigator.clipboard.writeText('https://' + link)
+          .then(() => Toast.show('Link copied!'))
+          .catch(() => Toast.show('Link: https://' + link));
+      });
+    }
+  </script>
+</body>
+</html>

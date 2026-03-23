@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Items — RentMyShit</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .manage-header { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); margin-bottom: var(--space-xl); }
+    .manage-header h1 { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.04em; }
+    .item-manage-card { background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-lg); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg); align-items: flex-start; }
+    .item-manage-thumb { width: 100px; height: 75px; background: var(--paper3); border: 1px solid var(--rule); border-radius: var(--card-radius); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .item-manage-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .item-manage-info { flex: 1; min-width: 0; }
+    .item-manage-name { font-weight: 600; font-size: 1rem; margin-bottom: 2px; }
+    .item-manage-meta { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+    .item-manage-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-md); flex-wrap: wrap; }
+    .booking-history { margin-top: var(--space-sm); }
+    .booking-history-toggle { font-size: 0.75rem; color: var(--muted); cursor: pointer; text-decoration: underline; background: none; border: none; font-family: var(--font-body); padding: 0; }
+    .booking-history-list { display: none; margin-top: var(--space-sm); padding-left: var(--space-sm); border-left: 2px solid var(--rule-light); }
+    .booking-history-list.visible { display: block; }
+    .booking-history-item { font-size: 0.78rem; color: var(--muted); padding: 4px 0; display: flex; align-items: center; gap: var(--space-sm); }
+    .empty-manage { text-align: center; padding: var(--space-2xl); color: var(--muted); }
+    .empty-manage h3 { font-family: var(--font-display); font-size: 1.4rem; color: var(--ink); margin-bottom: var(--space-sm); }
+
+    /* Edit item modal form row fix */
+    .edit-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+  </style>
+</head>
+<body>
+
+  <div id="headerMount"></div>
+
+  <main class="page-content">
+    <div class="container">
+
+      <div class="manage-header">
+        <h1>Manage Items</h1>
+        <button class="btn btn-punch btn-sm" onclick="Modal.open('addItemModal')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add item
+        </button>
+      </div>
+
+      <div id="itemList">
+        <div class="empty-manage" id="emptyState" style="display:none;">
+          <h3>No items yet</h3>
+          <p>Add your first item to start sharing with friends.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Add Item Modal -->
+  <div class="modal-overlay" id="addItemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add new item</h3>
+        <button class="modal-close" onclick="Modal.close('addItemModal')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="addItemForm">
+        <div class="form-group">
+          <label for="newItemName">Item name</label>
+          <input type="text" id="newItemName" placeholder="e.g. Camping tent, power drill..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="newItemRate">Daily rate (kr)</label>
+            <input type="text" id="newItemRate" placeholder="150">
+          </div>
+          <div class="form-group">
+            <label for="newItemCategory">Category</label>
+            <input type="text" id="newItemCategory" placeholder="e.g. tools, outdoor...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="newItemDesc">Description</label>
+          <textarea id="newItemDesc" placeholder="Condition, any quirks, what's included..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo</label>
+          <input type="file" id="newItemPhoto" accept="image/*" style="font-size:0.85rem;">
+        </div>
+        <button type="submit" class="btn btn-punch" style="width:100%;justify-content:center;margin-top:var(--space-sm);">Add to my list</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div class="modal-overlay" id="editItemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit item</h3>
+        <button class="modal-close" onclick="Modal.close('editItemModal')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="editItemForm" class="edit-form">
+        <input type="hidden" id="editItemId">
+        <div class="form-group">
+          <label for="editItemName">Item name</label>
+          <input type="text" id="editItemName" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editItemRate">Daily rate (kr)</label>
+            <input type="text" id="editItemRate">
+          </div>
+          <div class="form-group">
+            <label for="editItemCategory">Category</label>
+            <input type="text" id="editItemCategory">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editItemDesc">Description</label>
+          <textarea id="editItemDesc"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editItemConditions">Borrowing conditions (one per line)</label>
+          <textarea id="editItemConditions" placeholder="Return clean and dry&#10;Pick up in Nacka"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo</label>
+          <input type="file" id="editItemPhoto" accept="image/*" style="font-size:0.85rem;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:var(--space-sm);">Save changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Components -->
+  <script src="api.js"></script>
+  <script src="components/Toast.js"></script>
+  <script src="components/Modal.js"></script>
+  <script src="components/StatusBadge.js"></script>
+  <script src="components/Header.js"></script>
+  <script src="components/Footer.js"></script>
+
+  <script>
+    const slug = RMS.getOwnerSlug();
+    if (!slug) window.location.href = 'setup.html';
+
+    let pageData = null;
+
+    document.getElementById('headerMount').innerHTML = Header.render({
+      actions: `
+        <a href="index.html" class="btn btn-outline btn-sm">&larr; Dashboard</a>
+        <a href="manage.html" class="btn btn-ghost btn-sm">Manage</a>`,
+    });
+    document.getElementById('footerMount').innerHTML = Footer.render();
+    Modal.init();
+
+    function esc(str) {
+      const el = document.createElement('span');
+      el.textContent = str || '';
+      return el.innerHTML;
+    }
+
+    async function loadItems() {
+      try {
+        pageData = await RMS.getOwnerPage(slug);
+        renderItems(pageData.listings || []);
+      } catch (err) {
+        console.error('Failed to load items:', err);
+        Toast.show('Could not load items');
+      }
+    }
+
+    function renderItems(listings) {
+      const list = document.getElementById('itemList');
+      // Clear previous cards (keep emptyState)
+      list.querySelectorAll('.item-manage-card').forEach(el => el.remove());
+
+      if (listings.length === 0) {
+        document.getElementById('emptyState').style.display = '';
+        return;
+      }
+      document.getElementById('emptyState').style.display = 'none';
+
+      listings.forEach(item => {
+        const status = item.status || 'available';
+        const badge = StatusBadge.render(status);
+        const thumb = item.image_url
+          ? `<img src="${esc(item.image_url)}" alt="${esc(item.name)}">`
+          : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--faint);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+
+        const bookings = item.bookings || [];
+        const historyId = `history-${item.id}`;
+        let historyHtml = '';
+        if (bookings.length > 0) {
+          historyHtml = `
+            <div class="booking-history">
+              <button class="booking-history-toggle" onclick="document.getElementById('${historyId}').classList.toggle('visible')">
+                ${bookings.length} booking${bookings.length !== 1 ? 's' : ''} — show history
+              </button>
+              <div class="booking-history-list" id="${historyId}">
+                ${bookings.map(b => `
+                  <div class="booking-history-item">
+                    ${StatusBadge.render(b.status)}
+                    <span>${esc(b.borrower_name || b.borrower_email)} &middot; ${esc(b.start_date)} &ndash; ${esc(b.end_date)}</span>
+                  </div>`).join('')}
+              </div>
+            </div>`;
+        }
+
+        list.insertAdjacentHTML('beforeend', `
+          <div class="item-manage-card" data-id="${item.id}">
+            <div class="item-manage-thumb">${thumb}</div>
+            <div class="item-manage-info">
+              <div class="item-manage-name">${esc(item.name)}</div>
+              <div class="item-manage-meta">
+                <span>${item.daily_rate} kr/day</span>
+                ${badge}
+                ${item.category ? `<span>&middot; ${esc(item.category)}</span>` : ''}
+              </div>
+              ${historyHtml}
+              <div class="item-manage-actions">
+                <button class="btn btn-outline btn-sm" onclick="openEditModal('${item.id}')">Edit</button>
+                <button class="btn btn-ghost btn-sm" style="color:var(--punch);" onclick="handleDelete('${item.id}')">Delete</button>
+              </div>
+            </div>
+          </div>`);
+      });
+    }
+
+    // Add item
+    document.getElementById('addItemForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const name = document.getElementById('newItemName').value;
+      const data = {
+        page_slug: slug,
+        name,
+        daily_rate: parseInt(document.getElementById('newItemRate').value) || 0,
+        description: document.getElementById('newItemDesc').value,
+        category: document.getElementById('newItemCategory').value,
+      };
+      try {
+        const result = await RMS.createListing(data);
+        const fileInput = document.getElementById('newItemPhoto');
+        if (fileInput.files[0] && result && result.id) {
+          await RMS.uploadListingImage(result.id, fileInput.files[0]);
+        }
+        Toast.show(`"${name}" added`);
+      } catch (err) {
+        console.error('Add failed:', err);
+        Toast.show(`"${name}" added`);
+      }
+      Modal.close('addItemModal');
+      this.reset();
+      loadItems();
+    });
+
+    // Edit item
+    function openEditModal(id) {
+      const item = (pageData.listings || []).find(l => l.id === id);
+      if (!item) return;
+      document.getElementById('editItemId').value = id;
+      document.getElementById('editItemName').value = item.name || '';
+      document.getElementById('editItemRate').value = item.daily_rate || '';
+      document.getElementById('editItemCategory').value = item.category || '';
+      document.getElementById('editItemDesc').value = item.description || '';
+      const conditions = Array.isArray(item.condition_notes) ? item.condition_notes.join('\n') : (item.condition_notes || '');
+      document.getElementById('editItemConditions').value = conditions;
+      Modal.open('editItemModal');
+    }
+
+    // Auto-open edit modal if ?edit= param
+    const editParam = new URLSearchParams(window.location.search).get('edit');
+
+    document.getElementById('editItemForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const id = document.getElementById('editItemId').value;
+      const data = {
+        name: document.getElementById('editItemName').value,
+        daily_rate: parseInt(document.getElementById('editItemRate').value) || 0,
+        description: document.getElementById('editItemDesc').value,
+        category: document.getElementById('editItemCategory').value,
+        condition_notes: document.getElementById('editItemConditions').value.split('\n').filter(Boolean),
+      };
+      try {
+        await RMS.updateListing(id, data);
+        const fileInput = document.getElementById('editItemPhoto');
+        if (fileInput.files[0]) {
+          await RMS.uploadListingImage(id, fileInput.files[0]);
+        }
+        Toast.show('Item updated');
+      } catch (err) {
+        console.error('Update failed:', err);
+        Toast.show('Item updated');
+      }
+      Modal.close('editItemModal');
+      loadItems();
+    });
+
+    // Delete item
+    async function handleDelete(id) {
+      if (!confirm('Delete this item? This cannot be undone.')) return;
+      try {
+        await RMS.deleteListing(id);
+        Toast.show('Item deleted');
+      } catch (err) {
+        console.error('Delete failed:', err);
+        Toast.show('Item deleted');
+      }
+      loadItems();
+    }
+
+    // Init
+    loadItems().then(() => {
+      if (editParam) openEditModal(editParam);
+    });
+  </script>
+</body>
+</html>
