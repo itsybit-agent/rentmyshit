@@ -18,7 +18,7 @@ jobs:
           username: itsybit.se
           password: ${{ secrets.ITSYBIT_FTP_PASSWORD }}
           local-dir: ./
-          server-dir: /public_html/rentmystuff/
+          server-dir: /rentmystuff/
           exclude: |
             **/.git*
             **/.git*/**
