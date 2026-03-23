@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Items — RentMyShit</title>
+  <link rel="stylesheet" href="../../shared/styles.css">
+  <style>
+    .manage-header { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-md); margin-bottom: var(--space-xl); }
+    .manage-header h1 { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.04em; }
+    .item-manage-card { background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-lg); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg); align-items: flex-start; }
+    .item-manage-thumb { width: 100px; height: 75px; background: var(--paper3); border: 1px solid var(--rule); border-radius: var(--card-radius); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .item-manage-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .item-manage-info { flex: 1; min-width: 0; }
+    .item-manage-name { font-weight: 600; font-size: 1rem; margin-bottom: 2px; }
+    .item-manage-meta { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+    .item-manage-actions { display: flex; gap: var(--space-sm); margin-top: var(--space-md); flex-wrap: wrap; }
+    .booking-history { margin-top: var(--space-sm); }
+    .booking-history-toggle { font-size: 0.75rem; color: var(--muted); cursor: pointer; text-decoration: underline; background: none; border: none; font-family: var(--font-body); padding: 0; }
+    .booking-history-list { display: none; margin-top: var(--space-sm); padding-left: var(--space-sm); border-left: 2px solid var(--rule-light); }
+    .booking-history-list.visible { display: block; }
+    .booking-history-item { font-size: 0.78rem; color: var(--muted); padding: 4px 0; display: flex; align-items: center; gap: var(--space-sm); }
+    .empty-manage { text-align: center; padding: var(--space-2xl); color: var(--muted); }
+    .empty-manage h3 { font-family: var(--font-display); font-size: 1.4rem; color: var(--ink); margin-bottom: var(--space-sm); }
+    .edit-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+  </style>
+</head>
+<body>
+
+  <div id="headerMount"></div>
+
+  <main class="page-content">
+    <div class="container">
+
+      <div class="manage-header">
+        <h1>Manage Items</h1>
+        <button class="btn btn-punch btn-sm" onclick="Modal.open('addItemModal')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add item
+        </button>
+      </div>
+
+      <div id="itemList">
+        <div class="empty-manage" id="emptyState" style="display:none;">
+          <h3>No items yet</h3>
+          <p>Add your first item to start sharing with friends.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Add Item Modal -->
+  <div class="modal-overlay" id="addItemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add new item</h3>
+        <button class="modal-close" onclick="Modal.close('addItemModal')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="addItemForm">
+        <div class="form-group">
+          <label for="newItemName">Item name</label>
+          <input type="text" id="newItemName" placeholder="e.g. Camping tent, power drill..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="newItemRate">Daily rate (kr)</label>
+            <input type="text" id="newItemRate" placeholder="150">
+          </div>
+          <div class="form-group">
+            <label for="newItemCategory">Category</label>
+            <input type="text" id="newItemCategory" placeholder="e.g. tools, outdoor...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="newItemDesc">Description</label>
+          <textarea id="newItemDesc" placeholder="Condition, any quirks, what's included..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo</label>
+          <input type="file" id="newItemPhoto" accept="image/*" style="font-size:0.85rem;">
+        </div>
+        <button type="submit" class="btn btn-punch" style="width:100%;justify-content:center;margin-top:var(--space-sm);">Add to my list</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div class="modal-overlay" id="editItemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit item</h3>
+        <button class="modal-close" onclick="Modal.close('editItemModal')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="editItemForm" class="edit-form">
+        <input type="hidden" id="editItemId">
+        <div class="form-group">
+          <label for="editItemName">Item name</label>
+          <input type="text" id="editItemName" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editItemRate">Daily rate (kr)</label>
+            <input type="text" id="editItemRate">
+          </div>
+          <div class="form-group">
+            <label for="editItemCategory">Category</label>
+            <input type="text" id="editItemCategory">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editItemDesc">Description</label>
+          <textarea id="editItemDesc"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editItemConditions">Borrowing conditions (one per line)</label>
+          <textarea id="editItemConditions" placeholder="Return clean and dry&#10;Pick up in Nacka"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo</label>
+          <input type="file" id="editItemPhoto" accept="image/*" style="font-size:0.85rem;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:var(--space-sm);">Save changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Components -->
+  <script src="../../shared/auth.js"></script>
+  <script src="../../shared/api.js"></script>
+  <script src="../../../lib/components/Toast.js"></script>
+  <script src="../../../lib/components/Modal.js"></script>
+  <script src="../../../lib/components/StatusBadge.js"></script>
+  <script src="../../../lib/components/Header.js"></script>
+  <script src="../../../lib/components/Footer.js"></script>
+  <script src="slice.js"></script>
+</body>
+</html>

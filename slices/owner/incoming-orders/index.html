@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incoming Orders — RentMyShit</title>
+  <link rel="stylesheet" href="../../shared/styles.css">
+  <style>
+    .new-badge { display: inline-block; background: var(--punch); color: var(--paper); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 1px 5px; border-radius: 1px; vertical-align: middle; margin-left: 6px; }
+  </style>
+</head>
+<body>
+
+  <div id="headerMount"></div>
+
+  <main class="page-content">
+    <div class="container">
+
+      <section id="requests">
+        <div class="section-header">
+          <h2 class="section-title">Incoming Orders <span class="new-badge" id="pendingBadge"></span></h2>
+          <a href="../dashboard/" class="btn btn-outline btn-sm">&larr; Dashboard</a>
+        </div>
+        <div class="request-list" id="requestList">
+          <div class="empty-state" id="noRequests" style="display:none;">
+            <h3>No pending requests</h3>
+            <p>When friends request to borrow your stuff, they'll show up here.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Components -->
+  <script src="../../shared/auth.js"></script>
+  <script src="../../shared/api.js"></script>
+  <script src="../../../lib/components/Toast.js"></script>
+  <script src="../../../lib/components/StatusBadge.js"></script>
+  <script src="../../../lib/components/Header.js"></script>
+  <script src="../../../lib/components/Footer.js"></script>
+  <script src="../../../lib/components/PendingRequestCard.js"></script>
+  <script src="slice.js"></script>
+</body>
+</html>

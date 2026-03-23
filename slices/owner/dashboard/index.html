@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RentMyShit — Your stuff, their use</title>
+  <link rel="stylesheet" href="../../shared/styles.css">
+  <style>
+    .stats-bar { display: flex; gap: var(--space-md); margin-bottom: var(--space-xl); flex-wrap: wrap; }
+    .stat-block { background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-md) var(--space-lg); flex: 1; min-width: 120px; }
+    .stat-value { font-family: var(--font-display); font-size: 2rem; line-height: 1; letter-spacing: 0.04em; }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+    .new-badge { display: inline-block; background: var(--punch); color: var(--paper); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 1px 5px; border-radius: 1px; vertical-align: middle; margin-left: 6px; }
+    .share-link-bar { background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-md) var(--space-lg); display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); flex-wrap: wrap; }
+    .share-link-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+    .share-link-url { flex: 1; font-family: monospace; font-size: 0.82rem; color: var(--ink-soft); background: var(--paper2); border: 1px solid var(--rule); padding: 6px 10px; border-radius: 1px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .item-card-edit-overlay { position: absolute; top: var(--space-sm); right: var(--space-sm); display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+    .item-card:hover .item-card-edit-overlay { opacity: 1; }
+    .edit-btn { background: var(--paper); border: 1px solid var(--rule); width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border-radius: 1px; transition: all 0.1s; }
+    .edit-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  </style>
+</head>
+<body>
+
+  <div id="headerMount"></div>
+
+  <!-- MAIN -->
+  <main class="page-content">
+    <div class="container">
+
+      <!-- Share link bar -->
+      <div class="share-link-bar">
+        <span class="share-link-label">Your invite link</span>
+        <div class="share-link-url" id="inviteUrl"></div>
+        <button class="btn btn-primary btn-sm" id="copyLinkBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy
+        </button>
+      </div>
+
+      <!-- Notification email strip -->
+      <div style="display:flex;align-items:center;gap:var(--space-md);padding:10px var(--space-lg);background:var(--paper2);border:1.5px solid var(--rule);border-top:none;margin-top:-1px;margin-bottom:var(--space-xl);flex-wrap:wrap;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span style="font-size:0.75rem;color:var(--muted);">Request notifications &rarr; <strong id="ownerEmail" style="color:var(--ink-soft);"></strong></span>
+        <button class="btn btn-ghost btn-sm" style="font-size:0.7rem;padding:3px 10px;margin-left:auto;" onclick="Toast.show('Email settings coming soon')">Change</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-block"><div class="stat-value" id="statItems">-</div><div class="stat-label">Items listed</div></div>
+        <div class="stat-block"><div class="stat-value text-punch" id="statPending">-</div><div class="stat-label">Pending requests</div></div>
+        <div class="stat-block"><div class="stat-value" id="statOut">-</div><div class="stat-label">Currently out</div></div>
+        <div class="stat-block"><div class="stat-value" id="statFriends">-</div><div class="stat-label">Friends with access</div></div>
+      </div>
+
+      <!-- PENDING REQUESTS -->
+      <section id="requests">
+        <div class="section-header">
+          <h2 class="section-title">Pending Requests <span class="new-badge" id="pendingBadge"></span></h2>
+        </div>
+        <div class="request-list" id="requestList">
+          <div class="empty-state" id="noRequests" style="display:none;">
+            <h3>No pending requests</h3>
+            <p>When friends request to borrow your stuff, they'll show up here.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      <!-- MY ITEMS -->
+      <section id="items">
+        <div class="section-header">
+          <h2 class="section-title">My Stuff</h2>
+          <button class="btn btn-punch btn-sm" onclick="Modal.open('addItemModal')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add item
+          </button>
+        </div>
+        <div class="item-grid" id="itemGrid"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ADD ITEM MODAL -->
+  <div class="modal-overlay" id="addItemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add new item</h3>
+        <button class="modal-close" onclick="Modal.close('addItemModal')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="addItemForm">
+        <div class="form-group">
+          <label for="itemName">Item name</label>
+          <input type="text" id="itemName" placeholder="e.g. Camping tent, power drill..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="itemRate">Daily rate (kr)</label>
+            <input type="text" id="itemRate" placeholder="150">
+          </div>
+          <div class="form-group">
+            <label for="itemCategory">Category</label>
+            <input type="text" id="itemCategory" placeholder="e.g. tools, outdoor...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="itemDesc">Description (optional)</label>
+          <textarea id="itemDesc" placeholder="Condition, any quirks, what's included..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo</label>
+          <input type="file" id="itemPhoto" accept="image/*" style="font-size:0.85rem;">
+        </div>
+        <button type="submit" class="btn btn-punch" style="width:100%; justify-content:center; margin-top: 8px;">
+          Add to my list
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Components -->
+  <script src="../../shared/auth.js"></script>
+  <script src="../../shared/api.js"></script>
+  <script src="../../../lib/components/Toast.js"></script>
+  <script src="../../../lib/components/Modal.js"></script>
+  <script src="../../../lib/components/StatusBadge.js"></script>
+  <script src="../../../lib/components/Header.js"></script>
+  <script src="../../../lib/components/Footer.js"></script>
+  <script src="../../../lib/components/ItemCard.js"></script>
+  <script src="../../../lib/components/PendingRequestCard.js"></script>
+  <script src="slice.js"></script>
+</body>
+</html>

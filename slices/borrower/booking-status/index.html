@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Booking — RentMyShit</title>
+  <link rel="stylesheet" href="../../shared/styles.css">
+  <style>
+    .booking-detail { max-width: 560px; margin: 0 auto; }
+    .booking-status-card { background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-xl); margin-bottom: var(--space-xl); }
+    .status-header { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl); }
+    .status-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .status-icon.pending { background: var(--pending-bg); border: 2px solid var(--pending-bd); color: var(--pending); }
+    .status-icon.confirmed { background: var(--available-bg); border: 2px solid var(--available-bd); color: var(--available); }
+    .status-icon.declined { background: var(--booked-bg); border: 2px solid var(--booked-bd); color: var(--booked); }
+    .status-icon.cancelled { background: var(--paper3); border: 2px solid var(--rule); color: var(--muted); }
+    .status-title { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.04em; }
+    .status-subtitle { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+    .detail-row { display: flex; justify-content: space-between; padding: var(--space-sm) 0; border-bottom: 1px solid var(--rule-light); font-size: 0.88rem; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: var(--muted); }
+    .detail-value { font-weight: 500; text-align: right; }
+    .detail-rows { margin-bottom: var(--space-xl); }
+    .message-block { background: var(--paper2); border-left: 2px solid var(--rule); padding: var(--space-md); font-size: 0.85rem; color: var(--ink-soft); font-style: italic; margin-bottom: var(--space-xl); }
+    .action-row { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+    .edit-dates-form { display: none; background: var(--paper2); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-lg); margin-bottom: var(--space-lg); }
+    .edit-dates-form.visible { display: block; }
+    .contact-info { background: var(--available-bg); border: 1.5px solid var(--available-bd); border-radius: var(--card-radius); padding: var(--space-md) var(--space-lg); margin-bottom: var(--space-xl); font-size: 0.88rem; }
+    .contact-info strong { display: block; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--available); margin-bottom: var(--space-xs); }
+  </style>
+</head>
+<body>
+
+  <div id="headerMount"></div>
+
+  <main class="page-content">
+    <div class="container">
+      <div class="booking-detail">
+
+        <div class="booking-status-card" id="statusCard">
+          <div class="status-header">
+            <div class="status-icon pending" id="statusIcon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <div class="status-title" id="statusTitle">Loading...</div>
+              <div class="status-subtitle" id="statusSubtitle"></div>
+            </div>
+          </div>
+
+          <div class="detail-rows" id="detailRows"></div>
+
+          <div class="message-block" id="messageBlock" style="display:none;"></div>
+
+          <!-- Contact info (shown when confirmed) -->
+          <div class="contact-info" id="contactInfo" style="display:none;">
+            <strong>Arrange pickup</strong>
+            <span id="contactDetails"></span>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="action-row" id="actionRow"></div>
+        </div>
+
+        <!-- Edit dates form (toggled) -->
+        <div class="edit-dates-form" id="editDatesForm">
+          <h3 style="font-family:var(--font-display);font-size:1.2rem;letter-spacing:0.04em;margin-bottom:var(--space-md);">Change dates</h3>
+          <form id="editForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editStart">From</label>
+                <input type="date" id="editStart" required>
+              </div>
+              <div class="form-group">
+                <label for="editEnd">To</label>
+                <input type="date" id="editEnd" required>
+              </div>
+            </div>
+            <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-md);">
+              <button type="submit" class="btn btn-primary btn-sm">Save new dates</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('editDatesForm').classList.remove('visible')">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- Components -->
+  <script src="../../shared/auth.js"></script>
+  <script src="../../shared/api.js"></script>
+  <script src="../../../lib/components/Toast.js"></script>
+  <script src="../../../lib/components/Modal.js"></script>
+  <script src="../../../lib/components/StatusBadge.js"></script>
+  <script src="../../../lib/components/Header.js"></script>
+  <script src="../../../lib/components/Footer.js"></script>
+  <script src="slice.js"></script>
+</body>
+</html>

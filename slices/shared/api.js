@@ -1,29 +1,13 @@
 // RentMyShit — API Client
-// Base URL configurable via localStorage or default
+// Requires: auth.js loaded first (sets up window.RMS with auth helpers)
 
 const API_BASE = localStorage.getItem('rms_api_base') || 'https://labsapi-hmeva5cfhdfkejhz.westeurope-01.azurewebsites.net/api/rms';
 const SITE_BASE = localStorage.getItem('rms_site_base') || 'https://itsybit-agent.github.io/rentmyshit';
 
-function getOwnerPin() {
-  return localStorage.getItem('rms_owner_pin') || '';
-}
-
-function setOwnerPin(pin) {
-  localStorage.setItem('rms_owner_pin', pin);
-}
-
-function getOwnerSlug() {
-  return localStorage.getItem('rms_owner_slug') || '';
-}
-
-function setOwnerSlug(slug) {
-  localStorage.setItem('rms_owner_slug', slug);
-}
-
 async function apiFetch(path, options = {}) {
   const url = `${API_BASE}${path}`;
   const headers = { 'Content-Type': 'application/json', ...options.headers };
-  const pin = getOwnerPin();
+  const pin = RMS.getOwnerPin();
   if (pin) {
     headers['X-Owner-Pin'] = pin;
   }
@@ -42,7 +26,6 @@ async function apiFetch(path, options = {}) {
 // ── Owner Pages ──
 
 function createOwnerPage(data) {
-  // data: { ownerName, ownerEmail, slug, pin, location?, swishNumber? }
   return apiFetch('/pages', { method: 'POST', body: JSON.stringify(data) });
 }
 
@@ -60,13 +43,19 @@ function updateOwnerPage(slug, data) {
 // ── Listings ──
 
 function createListing(data) {
-  // data: { pageSlug, name, description?, dailyRate, condition_notes?, category? }
   const { pageSlug, ...body } = data;
   return apiFetch(`/pages/${encodeURIComponent(pageSlug)}/items`, { method: 'POST', body: JSON.stringify(body) });
 }
 
-function getListing(slug, id) {
-  return apiFetch(`/pages/${encodeURIComponent(slug)}/items/${encodeURIComponent(id)}`);
+async function getListing(slug, id) {
+  const data = await apiFetch(`/pages/${encodeURIComponent(slug)}/items/${encodeURIComponent(id)}`);
+  if (data) {
+    data.condition_notes = data.conditionNotes;
+    data.next_booked = data.nextAvailableDate
+      ? `until ${data.nextAvailableDate}`
+      : null;
+  }
+  return data;
 }
 
 function updateListing(slug, id, data) {
@@ -83,7 +72,7 @@ function deleteListing(slug, id) {
 function uploadListingImage(id, file) {
   const formData = new FormData();
   formData.append('image', file);
-  const pin = getOwnerPin();
+  const pin = RMS.getOwnerPin();
   const headers = {};
   if (pin) headers['X-Owner-Pin'] = pin;
   return fetch(`${API_BASE}/listings/${encodeURIComponent(id)}/image`, {
@@ -99,7 +88,6 @@ function uploadListingImage(id, file) {
 // ── Bookings ──
 
 function requestBooking(listingId, data) {
-  // data: { startDate, endDate, message?, borrowerEmail }
   return apiFetch(`/listings/${encodeURIComponent(listingId)}/bookings`, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -130,7 +118,6 @@ function cancelBooking(bookingId, token) {
 }
 
 function editBooking(bookingId, token, data) {
-  // data: { startDate, endDate }
   return apiFetch(`/bookings/${encodeURIComponent(bookingId)}`, {
     method: 'PUT',
     body: JSON.stringify({ token, ...data }),
@@ -141,14 +128,10 @@ function getListingAvailability(listingId) {
   return apiFetch(`/listings/${encodeURIComponent(listingId)}/availability`);
 }
 
-// ── Export as global ──
-window.RMS = {
+// ── Export ──
+Object.assign(window.RMS, {
   API_BASE,
   SITE_BASE,
-  getOwnerPin,
-  setOwnerPin,
-  getOwnerSlug,
-  setOwnerSlug,
   createOwnerPage,
   getOwnerPage,
   updateOwnerPage,
@@ -164,4 +147,4 @@ window.RMS = {
   cancelBooking,
   editBooking,
   getListingAvailability,
-};
+});
