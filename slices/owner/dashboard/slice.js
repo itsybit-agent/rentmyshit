@@ -5,17 +5,26 @@ window.RMS_PATHS = {
   itemDetail: '../../borrower/item-detail/',
 };
 
-// Check URL for ?slug= param first, fall back to localStorage
+// Slug always comes from URL — bookmarkable dashboard
 const urlParams = new URLSearchParams(window.location.search);
 const urlSlug = urlParams.get('slug');
 const storedSlug = RMS.getOwnerSlug();
 const slug = urlSlug || storedSlug;
-const needsPinPrompt = urlSlug && (!storedSlug || storedSlug !== urlSlug || !RMS.getOwnerPin());
 
 // If no slug at all, redirect to setup
 if (!slug) {
   window.location.href = '../create-page/';
 }
+
+// Always keep slug in URL so bookmarks work
+if (slug && !urlSlug) {
+  const newUrl = new URL(window.location.href);
+  newUrl.searchParams.set('slug', slug);
+  window.history.replaceState(null, '', newUrl.toString());
+}
+
+// Show PIN prompt if: different slug than stored, or no PIN stored
+const needsPinPrompt = !RMS.getOwnerPin() || (storedSlug !== slug);
 
 let pageData = null;
 
