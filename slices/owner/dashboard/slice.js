@@ -48,7 +48,8 @@ EventLog.init(slug);
 let inviteUrl = '';
 
 function updateInviteUrl(token) {
-  inviteUrl = RMS.SITE_BASE + '/slices/borrower/browse/?slug=' + encodeURIComponent(slug) + '&t=' + encodeURIComponent(token);
+  const base = RMS.SITE_BASE + '/' + encodeURIComponent(slug);
+  inviteUrl = token ? base + '?t=' + encodeURIComponent(token) : base;
   document.getElementById('inviteUrl').textContent = inviteUrl;
 }
 
@@ -59,7 +60,7 @@ function copyLink() {
     .catch(() => Toast.show('Link: ' + inviteUrl));
 }
 
-const dashboardUrl = RMS.SITE_BASE + '/slices/owner/dashboard/?slug=' + encodeURIComponent(slug);
+const dashboardUrl = RMS.SITE_BASE + '/' + encodeURIComponent(slug) + '/admin';
 
 function copyDashboardLink() {
   navigator.clipboard.writeText(dashboardUrl)

@@ -37,10 +37,11 @@ function renderPage(data) {
   const available = listings.filter(l => l.status !== 'booked').length;
 
   // Header
+  const cleanBase = window.location.origin + '/' + encodeURIComponent(slug);
   document.getElementById('headerMount').innerHTML = Header.render({
-    logoHref: './?slug=' + encodeURIComponent(slug) + (shareToken ? '&t=' + encodeURIComponent(shareToken) : ''),
+    logoHref: cleanBase + (shareToken ? '?t=' + encodeURIComponent(shareToken) : ''),
     tagline: `Shared by ${name}`,
-    actions: '<a href="../../owner/create-page/" class="btn btn-ghost btn-sm">Got your own stuff? &rarr;</a>',
+    actions: `<a href="${cleanBase}/admin" class="btn btn-ghost btn-sm">Admin login</a>`,
   });
 
   // Footer
