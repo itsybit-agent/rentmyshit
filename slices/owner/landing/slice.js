@@ -13,35 +13,11 @@ if (!slug) {
 document.getElementById('headerMount').innerHTML = Header.render({ logoHref: './' });
 document.getElementById('footerMount').innerHTML = Footer.render();
 
-// Load owner name for display
-async function loadOwnerInfo() {
-  try {
-    // Use the browse endpoint (no auth needed for owner name)
-    const res = await fetch(
-      `${RMS.API_BASE}/pages/${encodeURIComponent(slug)}/browse`,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-    if (res.ok) {
-      const data = await res.json();
-      const name = data.ownerName || slug;
-      const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-      document.getElementById('ownerAvatar').textContent = initials;
-      document.getElementById('ownerName').textContent = name;
-      document.getElementById('ownerSub').textContent = `${data.items?.length || 0} item${(data.items?.length || 0) !== 1 ? 's' : ''} to borrow`;
-      document.title = `${name} — RentMyStuff`;
-    } else {
-      // Page exists but is private — still show slug-based info
-      document.getElementById('ownerAvatar').textContent = slug[0].toUpperCase();
-      document.getElementById('ownerName').textContent = slug;
-      document.getElementById('ownerSub').textContent = 'Private listing';
-    }
-  } catch (e) {
-    document.getElementById('ownerAvatar').textContent = slug[0].toUpperCase();
-    document.getElementById('ownerName').textContent = slug;
-  }
-}
-
-loadOwnerInfo();
+// Show slug-based info — no API call needed on landing
+const initials = slug.split('-').map(w => w[0]).join('').toUpperCase().slice(0, 2) || slug[0].toUpperCase();
+document.getElementById('ownerAvatar').textContent = initials;
+document.getElementById('ownerName').textContent = slug;
+document.title = `${slug} — RentMyStuff`;
 
 // PIN form → dashboard
 document.getElementById('pinForm').addEventListener('submit', async function (e) {
