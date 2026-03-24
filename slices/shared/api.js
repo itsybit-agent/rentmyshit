@@ -108,8 +108,8 @@ async function uploadListingImage(slug, id, file) {
 
 // ── Bookings ──
 
-function requestBooking(listingId, data) {
-  return apiFetch(`/listings/${encodeURIComponent(listingId)}/bookings`, {
+function requestBooking(itemId, data) {
+  return apiFetch(`/items/${encodeURIComponent(itemId)}/bookings`, {
     method: 'POST',
     body: JSON.stringify(data),
   });
