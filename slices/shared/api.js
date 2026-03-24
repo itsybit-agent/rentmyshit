@@ -46,6 +46,14 @@ function createOwnerPage(data) {
   return apiFetch('/pages', { method: 'POST', body: JSON.stringify(data), silent: true }); // caller handles 409
 }
 
+function requestAccess(slug, data) {
+  return apiFetch(`/pages/${encodeURIComponent(slug)}/access-requests`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    silent: true,
+  });
+}
+
 function getOwnerPage(slug) {
   return apiFetch(`/pages/${encodeURIComponent(slug)}`);
 }
@@ -195,4 +203,5 @@ Object.assign(window.RMS, {
   getPageEvents,
   requestPinReset,
   confirmPinReset,
+  requestAccess,
 });
