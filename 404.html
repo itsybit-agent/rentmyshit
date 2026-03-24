@@ -7,6 +7,7 @@
 <body>
 <script>
   // Clean URL router: /slug → browse, /slug/admin → dashboard
+  // This page is served as a custom 404 to handle clean slug URLs
   const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
   const parts = path.split('/');
   const slug = parts[0];
@@ -17,8 +18,9 @@
   } else if (section === 'admin') {
     window.location.replace('/slices/owner/dashboard/?slug=' + encodeURIComponent(slug));
   } else {
-    const qs = window.location.search; // preserve ?t= token if present
-    window.location.replace('/slices/borrower/browse/?slug=' + encodeURIComponent(slug) + (qs ? '&' + qs.slice(1) : ''));
+    const token = new URLSearchParams(window.location.search).get('t');
+    const dest = '/slices/borrower/browse/?slug=' + encodeURIComponent(slug) + (token ? '&t=' + encodeURIComponent(token) : '');
+    window.location.replace(dest);
   }
 </script>
 </body>
