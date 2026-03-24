@@ -139,7 +139,7 @@ document.getElementById('editItemForm').addEventListener('submit', async functio
     dailyRate: parseInt(document.getElementById('editItemRate').value) || 0,
     description: document.getElementById('editItemDesc').value,
     category: document.getElementById('editItemCategory').value,
-    condition_notes: document.getElementById('editItemConditions').value.split('\n').filter(Boolean),
+    conditionNotes: document.getElementById('editItemConditions').value.trim() || null,
   };
   try {
     await RMS.updateListing(slug, id, data);
