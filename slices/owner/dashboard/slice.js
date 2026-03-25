@@ -218,8 +218,9 @@ document.getElementById('addItemForm').addEventListener('submit', async function
   try {
     const result = await RMS.createListing(data);
     const fileInput = document.getElementById('itemPhoto');
-    if (fileInput.files[0] && result && result.id) {
-      await RMS.uploadListingImage(result.id, fileInput.files[0]);
+    const newItemId = result && (result.itemId || result.id);
+    if (fileInput.files[0] && newItemId) {
+      await RMS.uploadListingImage(slug, newItemId, fileInput.files[0]);
     }
     Toast.show(`"${name}" added to your list`);
     Modal.close('addItemModal');
