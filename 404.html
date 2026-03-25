@@ -1,25 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>FörRåd</title>
-</head>
+<head><meta charset="UTF-8"><title>FörRåd</title></head>
 <body>
 <script>
-  // Clean URL router:
-  //   /slug           → landing (PIN login + access request)
-  //   /slug?t=token   → browse (friend view)
-  //   /slug/admin     → dashboard (PIN login)
+  // Clean URL router — handles all slug-based routes
   const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
   const parts = path.split('/');
   const first = parts[0];
   const second = parts[1];
   const token = new URLSearchParams(window.location.search).get('t');
 
-  if (!first) {
-    window.location.replace('/slices/owner/create-page/');
+  if (!first || first === 'index.html') {
+    window.location.replace('/');
   } else if (first === 'r' && second) {
-    // /r/{bookingToken} → borrower booking status page
     window.location.replace('/r/?token=' + encodeURIComponent(second));
   } else if (second === 'admin') {
     window.location.replace('/slices/owner/dashboard/?slug=' + encodeURIComponent(first));
