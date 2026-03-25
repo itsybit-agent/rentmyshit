@@ -65,8 +65,35 @@
   </div>
 
   <div class="already-have">
-    Already have a page? <a href="#" id="goToPageLink">Go to your page →</a>
+    <details>
+      <summary>Already have a page?</summary>
+      <div class="already-have-body">
+        <form id="findBySlugForm">
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <input type="text" id="slugInput" placeholder="your-page-slug" style="flex:1;font-size:0.85rem;" autocomplete="off" spellcheck="false">
+            <button type="submit" class="btn btn-outline btn-sm">Go →</button>
+          </div>
+        </form>
+        <div style="text-align:center;margin-top:10px;font-size:0.78rem;color:var(--muted);">
+          Forgot your URL? <a href="#" id="showEmailRecovery" style="color:var(--ink);">Send me a link</a>
+        </div>
+        <form id="emailRecoveryForm" style="display:none;margin-top:10px;">
+          <div style="display:flex;gap:8px;">
+            <input type="email" id="recoveryEmail" placeholder="your@email.com" style="flex:1;font-size:0.85rem;" autocomplete="email">
+            <button type="submit" class="btn btn-outline btn-sm">Send</button>
+          </div>
+          <div id="recoverySuccess" style="display:none;font-size:0.78rem;color:var(--available);margin-top:8px;">✓ Check your inbox!</div>
+          <div id="recoveryError" style="display:none;font-size:0.78rem;color:var(--punch);margin-top:8px;">Something went wrong — try again.</div>
+        </form>
+      </div>
+    </details>
   </div>
+  <style>
+    .already-have details { border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-sm) var(--space-md); max-width: 340px; margin: 0 auto; }
+    .already-have summary { cursor: pointer; font-size: 0.82rem; color: var(--muted); list-style: none; }
+    .already-have summary::-webkit-details-marker { display: none; }
+    .already-have-body { padding-top: 4px; }
+  </style>
 
   <div id="footerMount"></div>
 
@@ -81,15 +108,37 @@
     document.getElementById('headerMount').innerHTML = Header.render({ logoHref: '/' });
     document.getElementById('footerMount').innerHTML = Footer.render();
 
-    // "Go to your page" — use stored slug if available
-    const storedSlug = RMS.getOwnerSlug();
-    const goLink = document.getElementById('goToPageLink');
-    if (storedSlug) {
-      goLink.href = '/' + encodeURIComponent(storedSlug) + '/admin';
-      goLink.textContent = storedSlug + '/admin →';
-    } else {
-      goLink.href = '/slices/owner/dashboard/';
-    }
+    // Slug input → go to /{slug}/admin
+    document.getElementById('findBySlugForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const slug = document.getElementById('slugInput').value.trim();
+      if (slug) window.location.href = '/' + encodeURIComponent(slug) + '/admin';
+    });
+
+    // Email recovery → POST /pages/find-by-email
+    document.getElementById('showEmailRecovery').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('emailRecoveryForm').style.display = '';
+      document.getElementById('showEmailRecovery').style.display = 'none';
+    });
+
+    document.getElementById('emailRecoveryForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('recoveryEmail').value;
+      document.getElementById('recoverySuccess').style.display = 'none';
+      document.getElementById('recoveryError').style.display = 'none';
+      try {
+        const API_BASE = localStorage.getItem('rms_api_base') || 'https://labsapi-hmeva5cfhdfkejhz.westeurope-01.azurewebsites.net/api/rms';
+        await fetch(`${API_BASE}/pages/find-by-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        document.getElementById('recoverySuccess').style.display = '';
+      } catch (err) {
+        document.getElementById('recoveryError').style.display = '';
+      }
+    });
   </script>
 </body>
 </html>
