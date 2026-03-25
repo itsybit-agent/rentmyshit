@@ -38,7 +38,10 @@ document.getElementById('headerMount').innerHTML = Header.render({
     </button>
     <a href="../manage-items/" class="btn btn-ghost btn-sm">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-    </a>`,
+    </a>
+    <button class="btn btn-ghost btn-sm" id="logoutBtn" title="Log out">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>`,
 });
 document.getElementById('footerMount').innerHTML = Footer.render();
 Modal.init();
@@ -69,6 +72,12 @@ function copyDashboardLink() {
 }
 
 document.getElementById('shareBtn').addEventListener('click', copyLink);
+
+document.getElementById('logoutBtn').addEventListener('click', function () {
+  RMS.setOwnerPin('');
+  RMS.setOwnerSlug('');
+  window.location.replace('/' + encodeURIComponent(slug));
+});
 document.getElementById('copyLinkBtn').addEventListener('click', copyLink);
 document.getElementById('copyDashLinkBtn').addEventListener('click', copyDashboardLink);
 
