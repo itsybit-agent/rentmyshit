@@ -22,8 +22,11 @@ async function loadPage() {
   } catch (err) {
     console.error('Failed to load page:', err);
     if (err.status === 403) {
+      const msg = shareToken
+        ? '<h2>This link is invalid or has expired</h2><p>Ask the owner for a new share link.</p>'
+        : '<h2>Private listing</h2><p>You need a share link from the owner to view their stuff.</p>';
       document.getElementById('itemGrid').innerHTML =
-        '<div style="text-align:center;padding:3rem;color:var(--muted);grid-column:1/-1;"><h2>This link is invalid or has expired</h2><p>Ask the owner for a new share link.</p></div>';
+        `<div style="text-align:center;padding:3rem;color:var(--muted);grid-column:1/-1;">${msg}</div>`;
       return;
     }
     Toast.show('Could not load this page');

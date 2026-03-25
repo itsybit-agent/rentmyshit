@@ -2,11 +2,12 @@
 // Requires: slices/shared/api.js (apiFetch, RMS core)
 
 function getBrowsePage(slug, token) {
-  // Use /browse endpoint when available (requires token); fall back to public /pages/{slug}
+  // Browse always uses /browse — requires share token
+  // No token = 403, caller handles that state
   const path = token
     ? `/pages/${encodeURIComponent(slug)}/browse?t=${encodeURIComponent(token)}`
-    : `/pages/${encodeURIComponent(slug)}`;
-  return RMS.apiFetch(path);
+    : `/pages/${encodeURIComponent(slug)}/browse`;
+  return RMS.apiFetch(path, { silent: true });
 }
 
 function requestBooking(itemId, data) {
