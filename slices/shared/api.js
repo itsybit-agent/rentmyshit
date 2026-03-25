@@ -128,6 +128,16 @@ function getBooking(bookingId, token) {
   return apiFetch(`/bookings/${encodeURIComponent(bookingId)}${params}`);
 }
 
+function getBookingView(bookingId, token) {
+  const params = token ? `?token=${encodeURIComponent(token)}` : '';
+  return apiFetch(`/bookings/${encodeURIComponent(bookingId)}/view${params}`);
+}
+
+function getBookingViewByToken(token) {
+  return apiFetch(`/bookings/by-token/${encodeURIComponent(token)}/view`);
+}
+}
+
 function confirmBooking(bookingId) {
   return apiFetch(`/bookings/${encodeURIComponent(bookingId)}/confirm`, { method: 'PUT' });
 }
@@ -195,6 +205,8 @@ Object.assign(window.RMS, {
   uploadListingImage,
   requestBooking,
   getBooking,
+  getBookingView,
+  getBookingViewByToken,
   confirmBooking,
   declineBooking,
   cancelBooking,

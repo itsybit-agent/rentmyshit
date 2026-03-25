@@ -12,18 +12,21 @@
   //   /slug/admin     → dashboard (PIN login)
   const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
   const parts = path.split('/');
-  const slug = parts[0];
-  const section = parts[1];
+  const first = parts[0];
+  const second = parts[1];
   const token = new URLSearchParams(window.location.search).get('t');
 
-  if (!slug) {
+  if (!first) {
     window.location.replace('/slices/owner/create-page/');
-  } else if (section === 'admin') {
-    window.location.replace('/slices/owner/dashboard/?slug=' + encodeURIComponent(slug));
+  } else if (first === 'r' && second) {
+    // /r/{bookingToken} → borrower booking status page
+    window.location.replace('/r/?token=' + encodeURIComponent(second));
+  } else if (second === 'admin') {
+    window.location.replace('/slices/owner/dashboard/?slug=' + encodeURIComponent(first));
   } else if (token) {
-    window.location.replace('/slices/borrower/browse/?slug=' + encodeURIComponent(slug) + '&t=' + encodeURIComponent(token));
+    window.location.replace('/slices/borrower/browse/?slug=' + encodeURIComponent(first) + '&t=' + encodeURIComponent(token));
   } else {
-    window.location.replace('/slices/owner/landing/?slug=' + encodeURIComponent(slug));
+    window.location.replace('/slices/owner/landing/?slug=' + encodeURIComponent(first));
   }
 </script>
 </body>
