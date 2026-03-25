@@ -437,53 +437,80 @@ body::before {
   border: 1.5px solid var(--rule);
   border-left: 4px solid var(--pending);
   border-radius: var(--card-radius);
-  padding: var(--space-md);
-  display: flex;
-  gap: var(--space-md);
-  align-items: flex-start;
+  margin-bottom: var(--space-sm);
+  overflow: hidden;
 }
 
 .request-card.new {
   border-left-color: var(--punch);
 }
 
-.request-thumb {
-  width: 56px;
-  height: 56px;
-  background: var(--paper3);
-  border: 1px solid var(--rule);
-  border-radius: 1px;
-  flex-shrink: 0;
+.request-card summary {
+  list-style: none;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--faint);
+  gap: var(--space-md);
+  padding: var(--space-md);
+  cursor: pointer;
+  user-select: none;
 }
 
-.request-info {
+.request-card summary::-webkit-details-marker { display: none; }
+
+.request-card[open] summary {
+  border-bottom: 1px solid var(--rule);
+}
+
+.request-summary-info {
   flex: 1;
   min-width: 0;
 }
 
 .request-item-name {
+  display: block;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
-.request-meta {
-  font-size: 0.82rem;
+.request-summary-meta {
+  display: block;
+  font-size: 0.78rem;
   color: var(--muted);
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.request-meta strong {
-  color: var(--ink-soft);
+.request-chevron {
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.request-card[open] .request-chevron {
+  transform: rotate(180deg);
+}
+
+.request-body {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.request-meta-full {
+  font-size: 0.78rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 
 .request-message {
   font-size: 0.82rem;
   color: var(--ink-soft);
-  margin-top: var(--space-sm);
   font-style: italic;
   padding: var(--space-sm);
   background: var(--paper2);
@@ -493,7 +520,6 @@ body::before {
 .request-actions {
   display: flex;
   gap: var(--space-sm);
-  margin-top: var(--space-md);
   flex-wrap: wrap;
 }
 
