@@ -17,7 +17,10 @@ document.getElementById('footerMount').innerHTML = Footer.render();
 const initials = slug.split('-').map(w => w[0]).join('').toUpperCase().slice(0, 2) || slug[0].toUpperCase();
 document.getElementById('ownerAvatar').textContent = initials;
 document.getElementById('ownerName').textContent = slug;
-document.title = `${slug} — RentMyStuff`;
+document.title = `${slug} — FörRåd`;
+if (window.RMS_BRAND && window.RMS_BRAND.explainer) {
+  document.getElementById('brandExplainer').textContent = window.RMS_BRAND.explainer;
+}
 
 // PIN form → dashboard
 document.getElementById('pinForm').addEventListener('submit', async function (e) {
