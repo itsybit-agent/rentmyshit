@@ -53,6 +53,10 @@ function declineBooking(bookingId, reason) {
   });
 }
 
+function markReturned(bookingId) {
+  return RMS.apiFetch(`/bookings/${encodeURIComponent(bookingId)}/return`, { method: 'PUT' });
+}
+
 function getPageEvents(slug) {
   return RMS.apiFetch(`/pages/${encodeURIComponent(slug)}/events`);
 }
@@ -64,5 +68,6 @@ Object.assign(window.RMS, {
   uploadListingImage,
   confirmBooking,
   declineBooking,
+  markReturned,
   getPageEvents,
 });

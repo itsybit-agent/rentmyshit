@@ -140,11 +140,38 @@ function renderDashboard(data) {
   // Stats
   const listings = data.items || [];
   const bookings = data.pendingBookings || [];
-  const lentOut = listings.filter(l => l.status === 'booked').length;
+  const activeBookings = data.activeBookings || [];
   document.getElementById('statItems').textContent = listings.length;
   document.getElementById('statPending').textContent = bookings.length;
-  document.getElementById('statOut').textContent = lentOut;
+  document.getElementById('statOut').textContent = activeBookings.length;
   document.getElementById('statFriends').textContent = data.friendCount || 0;
+
+  // Currently out
+  const activeSection = document.getElementById('activeSection');
+  const activeDivider = document.getElementById('activeDivider');
+  const activeList = document.getElementById('activeList');
+  activeList.innerHTML = '';
+  if (activeBookings.length > 0) {
+    activeSection.style.display = '';
+    activeDivider.style.display = '';
+    activeBookings.forEach(b => {
+      const thumb = b.itemPhoto
+        ? `<img src="${esc(b.itemPhoto)}" style="width:48px;height:48px;object-fit:cover;border-radius:4px;flex-shrink:0;">`
+        : `<div style="width:48px;height:48px;background:var(--rule);border-radius:4px;flex-shrink:0;"></div>`;
+      activeList.insertAdjacentHTML('beforeend', `
+        <div style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) 0;border-bottom:1px solid var(--rule);">
+          ${thumb}
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:0.9rem;">${esc(b.itemName)}</div>
+            <div style="font-size:0.78rem;color:var(--muted);">${esc(b.borrowerEmail)} · until ${b.endDate}</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="handleMarkReturned('${b.bookingId}')">Returned</button>
+        </div>`);
+    });
+  } else {
+    activeSection.style.display = 'none';
+    activeDivider.style.display = 'none';
+  }
 
   // Pending requests
   const requestList = document.getElementById('requestList');
@@ -176,6 +203,23 @@ function renderDashboard(data) {
 }
 
 // Accept / Decline bookings
+function esc(str) {
+  const el = document.createElement('span');
+  el.textContent = str || '';
+  return el.innerHTML;
+}
+
+async function handleMarkReturned(bookingId) {
+  if (!confirm('Mark this item as returned?')) return;
+  try {
+    await RMS.markReturned(bookingId);
+    Toast.show('Marked as returned');
+    loadDashboard();
+  } catch (err) {
+    Toast.show('Could not update — try again', 'error');
+  }
+}
+
 window.addEventListener('booking:accept', async function (e) {
   const id = e.detail;
   const card = document.querySelector(`[data-booking-id="${id}"]`);
