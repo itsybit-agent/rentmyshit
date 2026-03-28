@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/demo/">
+  <title>Anna's stuff — FörRåd (Demo)</title>
+  <link rel="stylesheet" href="../slices/shared/styles.css">
+  <style>
+    .demo-banner {
+      background: var(--pending-bg);
+      border-bottom: 2px solid var(--pending-bd);
+      padding: 10px var(--space-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      font-size: 0.78rem;
+      color: var(--pending);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+    .demo-banner a {
+      color: var(--punch);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .demo-banner a:hover { text-decoration: underline; }
+    .trust-note { background: var(--paper); border: 1.5px solid var(--rule); border-radius: var(--card-radius); padding: var(--space-md) var(--space-lg); margin-bottom: var(--space-xl); display: flex; align-items: center; gap: var(--space-md); font-size: 0.85rem; color: var(--muted); }
+    .trust-note svg { flex-shrink: 0; color: var(--available); }
+    .trust-note strong { color: var(--ink); }
+    .search-bar { position: relative; margin-bottom: var(--space-lg); }
+    .search-bar input { padding-left: 36px; }
+    .search-bar svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--faint); pointer-events: none; }
+    .filter-row { display: flex; gap: var(--space-sm); margin-bottom: var(--space-xl); flex-wrap: wrap; }
+    .filter-btn { font-family: var(--font-body); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border: 1.5px solid var(--rule); border-radius: 20px; background: transparent; color: var(--muted); cursor: pointer; transition: all 0.1s; }
+    .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .filter-btn:hover:not(.active) { border-color: var(--ink-soft); color: var(--ink); }
+    .item-card .item-request-btn { display: block; width: 100%; text-align: center; padding: 8px; background: var(--ink); color: var(--paper); font-family: var(--font-body); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.1s; }
+    .item-card .item-request-btn:hover { background: var(--punch); }
+    .item-card.booked .item-request-btn { background: var(--paper3); color: var(--muted); cursor: not-allowed; }
+
+    /* Photo placeholder emoji style */
+    .photo-placeholder {
+      width: 100%;
+      height: 160px;
+      background: var(--paper2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 2.5rem;
+    }
+    .photo-placeholder span {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: var(--font-body);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Demo banner (always visible) -->
+  <div class="demo-banner">
+    🎭 This is a demo listing — no real data, no backend.
+    <a href="/slices/owner/create-page/">Create your own free page →</a>
+  </div>
+
+  <div id="headerMount"></div>
+
+  <main class="page-content">
+    <div class="container">
+
+      <!-- Owner banner -->
+      <div class="owner-banner">
+        <div class="owner-avatar" id="ownerAvatar">AL</div>
+        <div class="owner-info">
+          <h2 id="ownerTitle">Anna Lindqvist's stuff</h2>
+          <p id="ownerSubtitle">Södermalm, Stockholm · 9 items available · Transactions offline — arrange directly with Anna</p>
+        </div>
+      </div>
+
+      <!-- Trust note -->
+      <div class="trust-note">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Anna shared this list with you personally. <strong>No payment on this platform</strong> — agree on terms directly. Only people with the link can see this.</span>
+      </div>
+
+      <!-- Search -->
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search for something..." id="searchInput" oninput="filterItems()">
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" onclick="setFilter(this, 'all')">All items</button>
+        <button class="filter-btn" onclick="setFilter(this, 'available')">Available now</button>
+        <button class="filter-btn" onclick="setFilter(this, 'outdoors')">Outdoors</button>
+        <button class="filter-btn" onclick="setFilter(this, 'tools')">Tools</button>
+        <button class="filter-btn" onclick="setFilter(this, 'kitchen')">Kitchen</button>
+        <button class="filter-btn" onclick="setFilter(this, 'tech')">Tech</button>
+      </div>
+
+      <!-- ITEM GRID -->
+      <div class="section-header">
+        <h2 class="section-title">Available to borrow</h2>
+        <span class="section-count" id="itemCount">0 items</span>
+      </div>
+
+      <div class="item-grid" id="itemGrid"></div>
+
+    </div>
+  </main>
+
+  <div id="footerMount"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- REQUEST MODAL -->
+  <div class="modal-overlay" id="requestModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="requestModalTitle">Request to borrow</h3>
+        <button class="modal-close" onclick="Modal.close('requestModal'); setTimeout(() => BookingForm.reset('requestForm'), 300);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="requestFormMount"></div>
+    </div>
+  </div>
+
+  <!-- Components -->
+  <script src="../lib/components/Toast.js"></script>
+  <script src="../slices/shared/brand.js"></script>
+  <script src="../slices/shared/auth.js"></script>
+  <script src="../slices/shared/api.js"></script>
+  <script src="../lib/components/Modal.js"></script>
+  <script src="../lib/components/StatusBadge.js"></script>
+  <script src="../lib/components/Header.js"></script>
+  <script src="../lib/components/Footer.js"></script>
+  <script src="../lib/components/ItemCard.js"></script>
+  <script src="../lib/components/BookingForm.js"></script>
+  <script src="demo.js"></script>
+</body>
+</html>
