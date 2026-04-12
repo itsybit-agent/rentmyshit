@@ -193,7 +193,7 @@ function renderDashboard(data) {
   const grid = document.getElementById('itemGrid');
   grid.innerHTML = '';
   listings.forEach(item => {
-    grid.insertAdjacentHTML('beforeend', ItemCard.render(item, { mode: 'owner', slug }));
+    grid.insertAdjacentHTML('beforeend', ItemCard.render(item, { mode: 'owner', slug, token: pageData.shareToken || '' }));
   });
   grid.insertAdjacentHTML('beforeend', `
     <button class="item-card-add" onclick="Modal.open('addItemModal')">

@@ -141,11 +141,14 @@ document.getElementById('editItemForm').addEventListener('submit', async functio
     category: document.getElementById('editItemCategory').value,
     conditionNotes: document.getElementById('editItemConditions').value.trim() || null,
   };
+  const fileInput = document.getElementById('editItemPhoto');
+  const fileToUpload = fileInput.files[0] || null;
+  // Reset file input immediately so stale file can't be reused on next edit
+  fileInput.value = '';
   try {
     await RMS.updateListing(slug, id, data);
-    const fileInput = document.getElementById('editItemPhoto');
-    if (fileInput.files[0]) {
-      await RMS.uploadListingImage(slug, id, fileInput.files[0]);
+    if (fileToUpload) {
+      await RMS.uploadListingImage(slug, id, fileToUpload);
     }
     Toast.show('Item updated');
   } catch (err) {

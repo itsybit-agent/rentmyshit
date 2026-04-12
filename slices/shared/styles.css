@@ -137,6 +137,24 @@ body::before {
   color: var(--punch);
 }
 
+.logo-beta {
+  display: inline-block;
+  font-size: 0.55rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--punch);
+  border: 1px solid var(--punch);
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+  opacity: 0.75;
+  position: relative;
+  top: -4px;
+}
+
 .logo-tagline {
   font-size: 0.7rem;
   letter-spacing: 0.15em;
