@@ -15,7 +15,7 @@
   } else if (first === 'r' && second) {
     // Preserve any query params (e.g. ?id=bookingId) when redirecting
     const qs = window.location.search ? '&' + window.location.search.replace(/^\?/, '') : '';
-    window.location.replace('/r/?token=' + encodeURIComponent(second) + qs);
+    window.location.replace('/slices/borrower/booking-status/?token=' + encodeURIComponent(second) + qs);
   } else if (second === 'admin') {
     window.location.replace('/slices/owner/dashboard/?slug=' + encodeURIComponent(first));
   } else if (token) {
